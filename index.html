@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频广告平台 - Seedance AI</title>
+    <!-- 引入 Google Fonts (Plus Jakarta Sans for a clean, modern UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 引入 Tailwind CSS (CDN 方式) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef0ff',
+                            100: '#e0e4ff',
+                            200: '#c7ceff',
+                            500: '#4a3aff', // Deep Blue/Purple
+                            600: '#3c2bc4',
+                        },
+                        secondary: {
+                            50: '#f0fdfa',
+                            500: '#00c6ff', // Cyan
+                        },
+                        surface: {
+                            50: '#f4f7fc',
+                            100: '#eef2f9',
+                            200: '#e2e8f0',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 20px rgba(74, 58, 255, 0.15)',
+                        'glass': '0 8px 32px rgba(31, 38, 135, 0.05)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #f4f7fc;
+            color: #1e293b;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* 柔和的滚动条 */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* 渐变背景类 */
+        .bg-gradient-soft {
+            background: linear-gradient(135deg, #eef0ff 0%, #f0fdfa 100%);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #00c6ff 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stroke-gradient {
+            stroke: url(#icon-gradient) !important;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #00c6ff 0%, #8b5cf6 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover:not(:disabled) {
+            opacity: 0.9;
+            box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .btn-gradient:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+    </style>
+
+    <!-- 引入 React, ReactDOM, Babel (CDN 方式) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 引入 Lucide Icons (CDN 方式，使用全局 window.lucide) -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .icon-svg { width: 20px; height: 20px; stroke-width: 2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        /* 隐藏滚动条但保留滚动功能 */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00c6ff" />
+                <stop offset="100%" stop-color="#8b5cf6" />
+            </linearGradient>
+        </defs>
+    </svg>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, createElement } = React;
+
+        // --- 简单封装一个 SVG Icon 组件来使用 Lucide ---
+        const Icon = ({ name, className = "", strokeWidth = 2 }) => {
+            const iconRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (iconRef.current && window.lucide) {
+                    const iconName = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+                    const iconData = window.lucide.icons[name] || window.lucide.icons[iconName] || window.lucide.icons.monitorPlay;
+                    
+                    if (iconData) {
+                        iconRef.current.innerHTML = '';
+                        try {
+                            const svg = window.lucide.createElement(iconData);
+                            svg.setAttribute('class', `icon-svg ${className}`);
+                            svg.setAttribute('stroke-width', strokeWidth.toString());
+                            iconRef.current.appendChild(svg);
+                        } catch (e) {
+                            console.error("Icon creation error:", e);
+                            iconRef.current.innerHTML = '<span class="text-red-500">?</span>';
+                        }
+                    }
+                }
+            }, [name, className, strokeWidth]);
+
+            return <span ref={iconRef} className="inline-flex items-center justify-center"></span>;
+        };
+
+        // --- 错误边界组件，防止白屏 ---
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, error: null };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true, error };
+            }
+
+            componentDidCatch(error, errorInfo) {
+                console.error("React Error Boundary caught an error:", error, errorInfo);
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-red-100 max-w-lg w-full">
+                                <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4">
+                                    <Icon name="AlertTriangle" className="w-6 h-6 text-red-500" />
+                                </div>
+                                <h2 className="text-xl font-bold text-slate-800 mb-2">组件渲染出错</h2>
+                                <p className="text-sm text-slate-500 mb-4">抱歉，页面渲染时遇到了一些问题。这通常是由于数据结构异常引起的。</p>
+                                <div className="bg-slate-50 p-4 rounded-xl overflow-x-auto mb-6">
+                                    <pre className="text-xs text-red-600 font-mono">{this.state.error?.toString()}</pre>
+                                </div>
+                                <button 
+                                    onClick={() => window.location.reload()}
+                                    className="btn-gradient px-6 py-2.5 rounded-xl text-sm font-bold focus:outline-none"
+                                >
+                                    刷新页面重试
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return this.props.children; 
+            }
+        }
+
+        // --- 模拟 Brand Kit 编辑器/展示页面 ---
+        const BrandKitEditor = ({ onNavigate }) => {
+            // 视图状态：'list' 表示展示品牌套件列表与概览，'edit' 表示编辑具体某个要素
+            const [viewMode, setViewMode] = useState('list');
+            const [activeElement, setActiveElement] = useState('material');
+            
+            // 左侧次级侧边栏选中的套件
+            const [activeKitId, setActiveKitId] = useState(1);
+            const [mockKits, setMockKits] = useState([
+                { id: 1, name: '极简科技风' },
+                { id: 2, name: '未命名套件' }
+            ]);
+
+            const [isDragging, setIsDragging] = useState(false);
+            const [uploadedFile, setUploadedFile] = useState(null);
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                setIsDragging(true);
+            };
+
+            const handleDragLeave = (e) => {
+                e.preventDefault();
+                setIsDragging(false);
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    setUploadedFile(e.dataTransfer.files[0].name);
+                }
+            };
+
+            const handleFileChange = (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    setUploadedFile(e.target.files[0].name);
+                }
+            };
+
+            const removeFile = () => {
+                setUploadedFile(null);
+            };
+
+            // 核心视觉和音频要素定义 (重分类及增加预设选项)
+            const visualGroup = [
+                { id: 'makeup', label: '妆造', icon: 'Brush', color: 'text-slate-400 group-hover:text-primary-500', presets: ['自然裸妆', '精致全妆', '复古妆容', '时尚前卫', '清新淡妆', '专业职场'] },
+                { id: 'costume', label: '服装', icon: 'Shirt', color: 'text-slate-400 group-hover:text-primary-500', presets: ['商务正装', '休闲时尚', '运动活力', '复古优雅', '极简主义', '街头潮流'] },
+                { id: 'expression', label: '表情', icon: 'Smile', color: 'text-slate-400 group-hover:text-primary-500', presets: ['自信微笑', '专业严肃', '亲和友善', '活力热情', '沉稳内敛', '俏皮可爱'] },
+                { id: 'gesture', label: '肢体', icon: 'PersonStanding', color: 'text-slate-400 group-hover:text-primary-500', presets: ['站姿挺拔', '坐姿优雅', '动态行走', '手势表达', '互动姿态', '静态展示'] },
+            ];
+
+            const sceneGroup = [
+                { id: 'material', label: '材质', icon: 'Image', color: 'text-slate-400 group-hover:text-primary-500', presets: ['金属', '玻璃', '木纹', '布料', '皮革', '陶瓷', '塑料', '石材', '纸质', '丝绒'] },
+                { id: 'color_grading', label: '调色', icon: 'Palette', color: 'text-slate-400 group-hover:text-primary-500', presets: ['暖色调', '冷色调', '高对比', '复古', '电影感', '清新', '暗黑', '赛博朋克'] },
+                { id: 'composition', label: '构图', icon: 'Camera', color: 'text-slate-400 group-hover:text-primary-500', presets: ['中心构图', '三分法', '对称构图', '引导线', '框架构图', '留白构图'] },
+            ];
+
+            const audioGroup = [
+                { id: 'dialogue_rhythm', label: '台词节奏', icon: 'Mic', color: 'text-slate-400 group-hover:text-primary-500', presets: ['慢速(0.8x)', '标准(1.0x)', '快速(1.2x)', '沉稳专业', '热情活力', '亲切温和', '权威可信'] },
+                { id: 'editing_rhythm', label: '剪辑节奏', icon: 'Scissors', color: 'text-slate-400 group-hover:text-primary-500', presets: ['慢节奏(长镜头)', '中节奏(标准)', '快节奏(快速剪辑)', '硬切', '淡入淡出', '滑动', '缩放'] },
+                { id: 'sound_effects', label: '音效', icon: 'Music', color: 'text-slate-400 group-hover:text-primary-500', presets: ['轻快活泼', '沉稳大气', '科技感', '温馨治愈', '动感节奏', '优雅古典'] },
+                { id: 'voice_texture', label: '声音材质', icon: 'Volume2', color: 'text-slate-400 group-hover:text-primary-500', presets: ['磁性', '清脆', '沙哑', '浑厚', '甜美', '空灵'] },
+            ];
+
+            const allElements = [...visualGroup, ...sceneGroup, ...audioGroup];
+
+            // 用于存储当前编辑表单中选中的预设状态
+            const [selectedPreset, setSelectedPreset] = useState(null);
+
+            // 当切换卡片时，重置选中状态
+            const handleCardClick = (id) => {
+                setActiveElement(id);
+                setSelectedPreset(null);
+                setViewMode('edit');
+            };
+
+            // 渲染套件概览视图（对应参考图右侧网格）
+            const renderKitOverview = () => (
+                <div className="max-w-5xl mx-auto animate-fade-in flex flex-col items-center">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-slate-800 mb-3">配置您的品牌套件</h2>
+                        <p className="text-slate-500">添加材质、调色、构图等要素以保持生成的视频风格一致。</p>
+                    </div>
+
+                    <div className="w-full space-y-12 mb-12">
+                        {/* 视觉要素区块 */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                                <Icon name="Eye" className="w-5 h-5 text-primary-500" />
+                                视觉要素
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {visualGroup.map(item => (
+                                    <div 
+                                        key={item.id} 
+                                        onClick={() => handleCardClick(item.id)}
+                                        className="group cursor-pointer flex flex-col"
+                                    >
+                                        <div className="aspect-[4/3] bg-white rounded-3xl border border-slate-200 flex items-center justify-center transition-all duration-300 group-hover:shadow-soft group-hover:-translate-y-1 group-hover:border-primary-300 relative overflow-hidden">
+                                            <div className={`w-16 h-16 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${item.color}`}>
+                                                <Icon name={item.icon} className="w-8 h-8" strokeWidth={1.5} />
+                                            </div>
+                                            {['expression'].includes(item.id) && (
+                                                <div className="absolute top-4 right-3 w-6 h-6 btn-gradient rounded-full flex items-center justify-center shadow-sm">
+                                                    <Icon name="Check" className="w-3 h-3 text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 className="mt-3 text-center text-sm font-bold text-slate-700 group-hover:text-primary-600 transition-colors">{item.label}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 画面要素区块 */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                                <Icon name="Monitor" className="w-5 h-5 text-primary-500" />
+                                画面要素
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {sceneGroup.map(item => (
+                                    <div 
+                                        key={item.id} 
+                                        onClick={() => handleCardClick(item.id)}
+                                        className="group cursor-pointer flex flex-col"
+                                    >
+                                        <div className="aspect-[4/3] bg-white rounded-3xl border border-slate-200 flex items-center justify-center transition-all duration-300 group-hover:shadow-soft group-hover:-translate-y-1 group-hover:border-primary-300 relative overflow-hidden">
+                                            <div className={`w-16 h-16 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${item.color}`}>
+                                                <Icon name={item.icon} className="w-8 h-8" strokeWidth={1.5} />
+                                            </div>
+                                            {['material', 'color_grading'].includes(item.id) && (
+                                                <div className="absolute top-4 right-3 w-6 h-6 btn-gradient rounded-full flex items-center justify-center shadow-sm">
+                                                    <Icon name="Check" className="w-3 h-3 text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 className="mt-3 text-center text-sm font-bold text-slate-700 group-hover:text-primary-600 transition-colors">{item.label}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 声音质感区块 */}
+                        <div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                                <Icon name="Volume2" className="w-5 h-5 text-primary-500" />
+                                声音质感
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {audioGroup.map(item => (
+                                    <div 
+                                        key={item.id} 
+                                        onClick={() => handleCardClick(item.id)}
+                                        className="group cursor-pointer flex flex-col"
+                                    >
+                                        <div className="aspect-[4/3] bg-white rounded-3xl border border-slate-200 flex items-center justify-center transition-all duration-300 group-hover:shadow-soft group-hover:-translate-y-1 group-hover:border-primary-300 relative overflow-hidden">
+                                            <div className={`w-16 h-16 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${item.color}`}>
+                                                <Icon name={item.icon} className="w-8 h-8" strokeWidth={1.5} />
+                                            </div>
+                                            {['editing_rhythm'].includes(item.id) && (
+                                                <div className="absolute top-4 right-3 w-6 h-6 btn-gradient rounded-full flex items-center justify-center shadow-sm">
+                                                    <Icon name="Check" className="w-3 h-3 text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 className="mt-3 text-center text-sm font-bold text-slate-700 group-hover:text-primary-600 transition-colors">{item.label}</h3>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full max-w-3xl">
+                        <div 
+                            className={`relative border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300 bg-white ${
+                                isDragging ? 'border-primary-500 bg-primary-50/50 shadow-glow' : 'border-slate-200 hover:border-primary-300'
+                            }`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+                            <input 
+                                type="file" 
+                                id="global-file-upload" 
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                onChange={handleFileChange}
+                                accept="image/*,.pdf,.doc,.docx"
+                            />
+                            
+                            {!uploadedFile ? (
+                                <div className="flex flex-col items-center pointer-events-none">
+                                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary-50 transition-colors">
+                                        <Icon name="UploadCloud" className="w-6 h-6 text-slate-400" />
+                                    </div>
+                                    <p className="text-base font-bold text-slate-700 mb-1">上传完整的品牌视觉手册以自动解析要素</p>
+                                    <p className="text-xs text-slate-400">支持 PNG, JPG, PDF · 最大 20MB</p>
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-between bg-surface-50 border border-slate-200 p-4 rounded-2xl relative z-30 shadow-sm max-w-md mx-auto">
+                                    <div className="flex items-center space-x-3 overflow-hidden">
+                                        <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center shrink-0">
+                                            <Icon name="File" className="w-5 h-5" />
+                                        </div>
+                                        <span className="text-sm font-bold text-slate-700 truncate">{uploadedFile}</span>
+                                    </div>
+                                    <button 
+                                        onClick={(e) => { e.preventDefault(); removeFile(); }}
+                                        className="p-2 hover:bg-red-100 text-slate-400 hover:text-red-500 rounded-xl transition-colors focus:outline-none"
+                                    >
+                                        <Icon name="X" className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // 渲染具体表单编辑视图
+            const renderEditForm = () => {
+                const activeItem = allElements.find(i => i.id === activeElement) || { id: activeElement, label: activeElement, presets: [] };
+                const presets = activeItem.presets || [];
+
+                return (
+                    <div className="max-w-4xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100 animate-slide-up">
+                        <header className="mb-10 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <button 
+                                    onClick={() => setViewMode('list')}
+                                    className="p-2 hover:bg-slate-50 text-slate-400 hover:text-slate-700 rounded-xl transition-colors focus:outline-none"
+                                >
+                                    <Icon name="ArrowLeft" className="w-5 h-5" />
+                                </button>
+                                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 flex items-center gap-3">
+                                    {activeItem ? activeItem.label : activeElement}
+                                </h2>
+                            </div>
+                            <button className="flex items-center space-x-2 btn-gradient px-5 py-2.5 rounded-xl text-sm font-bold focus:outline-none shadow-soft hover:shadow-md hover:-translate-y-0.5">
+                                <Icon name="Save" className="w-4 h-4 hidden md:block" />
+                                <span>保存要素</span>
+                            </button>
+                        </header>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                            {presets && presets.length > 0 ? presets.map((opt, idx) => (
+                                <button 
+                                    key={opt} 
+                                    onClick={() => setSelectedPreset(opt)}
+                                    className={`p-5 rounded-2xl border-2 text-left transition-all duration-200 focus:outline-none flex flex-col gap-3 ${
+                                        selectedPreset === opt ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm' : 'border-slate-100 hover:border-primary-200 hover:bg-slate-50 text-slate-600'
+                                    }`}
+                                >
+                                    <Icon name={selectedPreset === opt ? "CheckCircle2" : "Circle"} className={`w-5 h-5 ${selectedPreset === opt ? 'text-primary-500' : 'text-slate-300'}`} />
+                                    <p className="font-semibold text-sm">{opt}</p>
+                                </button>
+                            )) : (
+                                <div className="col-span-2 md:col-span-4 p-8 text-center border-2 border-dashed border-slate-200 rounded-2xl">
+                                    <p className="text-slate-500">暂无预设选项，请直接在下方输入自定义描述。</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-10 pt-8 border-t border-slate-100">
+                            <label htmlFor="custom-desc" className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
+                                <Icon name="Edit3" className="w-4 h-4 text-primary-500" />
+                                自定义描述 (可选)
+                            </label>
+                            <textarea 
+                                id="custom-desc"
+                                className="w-full h-32 p-5 bg-surface-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 text-slate-800 text-sm outline-none resize-none transition-all mb-8 placeholder:text-slate-400"
+                                placeholder={`例如：希望${activeItem ? activeItem.label : ''}呈现...`}
+                            ></textarea>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="flex h-screen bg-surface-50 relative">
+                    {/* 左侧次级导航 - 套件列表 */}
+                    <aside className="w-64 bg-white/80 backdrop-blur-xl border-r border-slate-100 flex flex-col shrink-0 z-10 shadow-sm">
+                        <div className="h-20 border-b border-slate-100 flex items-center px-6">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 flex items-center justify-center">
+                                    <Icon name="Palette" className="w-6 h-6 text-gradient" />
+                                </div>
+                                <h2 className="text-xl font-bold text-slate-800 tracking-tight">企业品牌套件</h2>
+                            </div>
+                        </div>
+                        
+                        <div className="p-4">
+                            <button className="w-full py-3 bg-white border border-slate-200 hover:border-primary-300 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm focus:outline-none group">
+                                <Icon name="Plus" className="w-4 h-4 text-primary-500 group-hover:scale-110 transition-transform" />
+                                新建套件
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                            {mockKits.map(kit => (
+                                <button 
+                                    key={kit.id}
+                                    onClick={() => {
+                                        setActiveKitId(kit.id);
+                                        setViewMode('list');
+                                    }}
+                                    className={`w-full text-left focus:outline-none transition-all group`}
+                                >
+                                    <div className={`aspect-video rounded-2xl mb-2 flex items-center justify-center border transition-all duration-300 ${
+                                        activeKitId === kit.id ? 'bg-white border-slate-100 shadow-sm' : 'bg-slate-50 border-transparent group-hover:border-slate-200'
+                                    }`}>
+                                        <Icon name="Palette" className={`w-8 h-8 ${activeKitId === kit.id ? 'stroke-gradient' : 'text-slate-300 group-hover:text-slate-400'}`} />
+                                    </div>
+                                    <h4 className={`text-sm font-bold truncate px-1 ${activeKitId === kit.id ? 'text-primary-700' : 'text-slate-600'}`}>{kit.name}</h4>
+                                </button>
+                            ))}
+                        </div>
+                    </aside>
+
+                    {/* 右侧主内容区域 */}
+                    <main className="flex-1 overflow-y-auto p-8 md:p-12 lg:p-16 custom-scrollbar relative">
+                        {/* 装饰光晕 */}
+                        <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary-100/60 rounded-full blur-[100px] pointer-events-none"></div>
+                        
+                        {viewMode === 'list' ? renderKitOverview() : renderEditForm()}
+                    </main>
+                </div>
+            );
+        };
+
+            // 视频生成页面 - 视频生成器组件
+            const VideoGenerator = ({ onNavigate }) => {
+                const [isGenerating, setIsGenerating] = useState(false);
+                const [progress, setProgress] = useState(0);
+                
+                // 选择套件的状态
+                const [selectedKit, setSelectedKit] = useState('未命名品牌套件');
+            
+            // 多轮对话状态
+            const [chatHistory, setChatHistory] = useState([]);
+            const [chatInput, setChatInput] = useState('');
+            const chatEndRef = React.useRef(null);
+
+            // 自动滚动到最新消息
+            React.useEffect(() => {
+                if (chatEndRef.current) {
+                    chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, [chatHistory, isGenerating, progress]);
+
+            // 执行生成任务的通用逻辑
+            const startGenerationTurn = (prompt) => {
+                setIsGenerating(true);
+                setProgress(0);
+                
+                // 将用户的 prompt 添加到对话历史
+                setChatHistory(prev => [...prev, { role: 'user', content: prompt }]);
+
+                const interval = setInterval(() => {
+                    setProgress(p => {
+                        const next = p + Math.floor(Math.random() * 15) + 5;
+                        if (next >= 100) {
+                            clearInterval(interval);
+                            setIsGenerating(false);
+                            // 模拟 AI 回复并附带生成的视频
+                            setChatHistory(prev => [...prev, { 
+                                role: 'ai', 
+                                content: '这是为您生成的视频，请查阅。如果您需要调整（例如修改背景、调整光线），请直接告诉我。', 
+                                videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' 
+                            }]);
+                            return 100;
+                        }
+                        return next;
+                    });
+                }, 800);
+            };
+
+            // 首次生成（从左侧表单触发）
+            const handleInitialGenerate = (e) => {
+                e.preventDefault();
+                if (isGenerating) return;
+                const scriptInput = document.getElementById('script-input');
+                const script = scriptInput ? scriptInput.value : '初始化生成脚本';
+                startGenerationTurn(script);
+            };
+
+            // 多轮对话生成（从底部输入框触发）
+            const handleChatSubmit = (e) => {
+                e.preventDefault();
+                if (!chatInput.trim() || isGenerating) return;
+                const prompt = chatInput;
+                setChatInput('');
+                startGenerationTurn(prompt);
+            };
+
+            return (
+                <div className="flex flex-col h-screen bg-surface-50 animate-fade-in relative">
+                    <header className="h-20 bg-white border-b border-slate-100 flex items-center px-6 md:px-10 shrink-0 z-10 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 flex items-center justify-center">
+                                <Icon name="Wand2" className="w-6 h-6 text-gradient" />
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-800 tracking-tight">视频生成</h1>
+                        </div>
+                    </header>
+
+                    <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+                        {/* 左侧配置面板 */}
+                        <aside className="w-full lg:w-[450px] xl:w-[480px] bg-white border-b lg:border-b-0 lg:border-r border-slate-100 overflow-y-auto flex flex-col shrink-0 z-10 custom-scrollbar shadow-sm">
+                            
+                            <form onSubmit={handleInitialGenerate} className="p-8 space-y-8 flex-1 flex flex-col relative">
+                                <div className="space-y-3 animate-slide-up" style={{ animationDelay: '50ms' }}>
+                                    <label className="flex items-center text-sm font-bold text-slate-700">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#8b5cf6] text-lg font-normal mr-2">1.</span> 
+                                        选择品牌套件
+                                    </label>
+                                    <div className="relative">
+                                        <select 
+                                            value={selectedKit}
+                                            onChange={(e) => setSelectedKit(e.target.value)}
+                                            className="w-full p-4 bg-surface-50 border border-slate-200 focus:ring-2 focus:ring-primary-500/50 text-slate-800 text-sm outline-none transition-all cursor-pointer appearance-none rounded-2xl font-medium"
+                                        >
+                                            <option value="未命名品牌套件">未命名品牌套件</option>
+                                            <option value="极简科技风">极简科技风</option>
+                                        </select>
+                                        <Icon name="ChevronDown" className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                    </div>
+                                    <p className="text-xs text-primary-600/70 font-medium px-1 flex items-center gap-1">
+                                        <Icon name="CheckCircle2" className="w-3 h-3" />
+                                        状态：已加载
+                                    </p>
+                                </div>
+
+                                <div className="space-y-3 animate-slide-up" style={{ animationDelay: '100ms' }}>
+                                    <label htmlFor="script-input" className="flex items-center text-sm font-bold text-slate-700">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#8b5cf6] text-lg font-normal mr-2">2.</span> 
+                                        视频描述脚本
+                                    </label>
+                                    <textarea 
+                                        id="script-input"
+                                        required 
+                                        placeholder="请输入详细的画面与动作描述..." 
+                                        className="w-full h-32 p-4 bg-surface-50 border border-slate-200 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 text-slate-800 text-sm outline-none resize-none transition-all rounded-2xl placeholder:text-slate-400"
+                                    ></textarea>
+                                </div>
+
+                                <div className="space-y-4 pt-6 border-t border-slate-100 animate-slide-up" style={{ animationDelay: '150ms' }}>
+                                    <label className="flex items-center text-sm font-bold text-slate-700">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00c6ff] to-[#8b5cf6] text-lg font-normal mr-2">3.</span> 
+                                        输出规格
+                                    </label>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label htmlFor="duration-select" className="text-xs font-semibold text-slate-500">视频生成时间</label>
+                                            <div className="relative">
+                                                <select id="duration-select" className="w-full p-4 bg-surface-50 border border-slate-200 focus:ring-2 focus:ring-primary-500/50 text-slate-800 text-sm outline-none transition-all cursor-pointer appearance-none rounded-2xl font-medium">
+                                                    <option>3秒</option>
+                                                    <option>5秒</option>
+                                                    <option>10秒</option>
+                                                    <option>15秒</option>
+                                                </select>
+                                                <Icon name="ChevronDown" className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                            <label htmlFor="ratio-select" className="text-xs font-semibold text-slate-500">视频比例</label>
+                                            <div className="relative">
+                                                <select id="ratio-select" className="w-full p-4 bg-surface-50 border border-slate-200 focus:ring-2 focus:ring-primary-500/50 text-slate-800 text-sm outline-none transition-all cursor-pointer appearance-none rounded-2xl font-medium">
+                                                    <option>21:9 (超宽屏)</option>
+                                                    <option>16:9 (宽屏)</option>
+                                                    <option>4:3 (标准屏)</option>
+                                                    <option>1:1 (正方形)</option>
+                                                    <option>3:4 (竖屏)</option>
+                                                    <option>9:16 (全面屏竖屏)</option>
+                                                </select>
+                                                <Icon name="ChevronDown" className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-8 mt-auto shrink-0 sticky bottom-0 bg-white/80 backdrop-blur-md pb-6 z-20">
+                                    <button 
+                                        disabled={isGenerating} 
+                                        className={`w-full py-4 rounded-2xl text-base font-bold flex items-center justify-center transition-all ${
+                                            isGenerating ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'btn-gradient shadow-soft hover:shadow-md hover:-translate-y-0.5'
+                                        }`}
+                                    >
+                                        {isGenerating ? (
+                                            <span className="flex items-center gap-2">
+                                                <Icon name="Loader2" className="animate-spin w-4 h-4" /> 
+                                                正在生成 {progress}%
+                                            </span>
+                                        ) : (
+                                            <>
+                                                <Icon name="Play" className="w-4 h-4" />
+                                                <span>开始生成视频</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </aside>
+
+                        {/* 右侧聊天/预览面板 */}
+                        <main className="flex-1 bg-surface-50 flex flex-col relative overflow-hidden">
+                            {chatHistory.length === 0 && !isGenerating ? (
+                                <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 animate-fade-in relative z-10">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[100px] bg-primary-100/50 transition-all duration-1000 pointer-events-none"></div>
+                                    <div className="text-center animate-slide-up z-10 max-w-sm">
+                                        <div className="w-24 h-24 bg-white rounded-3xl shadow-sm flex items-center justify-center mx-auto mb-6">
+                                            <Icon name="Film" className="w-10 h-10 text-primary-300" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-slate-800 mb-3">等待生成指令</h3>
+                                        <p className="text-sm text-slate-500 leading-relaxed">在左侧配置参数并点击“开始生成”，您的专属视频和后续对话将在此处呈现。</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 space-y-6 custom-scrollbar relative z-10">
+                                    {/* 现代聊天气泡 */}
+                                    {chatHistory.map((msg, idx) => (
+                                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
+                                            {msg.role !== 'user' && (
+                                                <div className="w-8 h-8 rounded-full bg-gradient-soft flex items-center justify-center shrink-0 mr-3 mt-1 shadow-sm">
+                                                    <Icon name="Sparkles" className="w-4 h-4 text-primary-600" />
+                                                </div>
+                                            )}
+                                            
+                                            <div className={`max-w-[85%] md:max-w-[75%] p-5 rounded-2xl shadow-sm ${
+                                                msg.role === 'user' 
+                                                    ? 'bg-primary-600 text-white rounded-tr-sm' 
+                                                    : 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'
+                                            }`}>
+                                                {msg.role === 'user' && (
+                                                    <div className="flex items-center gap-2 mb-2 text-white/70">
+                                                        <Icon name="User" className="w-3 h-3" />
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider">You</span>
+                                                    </div>
+                                                )}
+                                                
+                                                <p className={`text-sm leading-relaxed whitespace-pre-wrap ${msg.role === 'user' ? 'text-white' : 'text-slate-700'}`}>{msg.content}</p>
+                                                
+                                                {/* 如果有生成的视频则展示 */}
+                                                {msg.videoUrl && (
+                                                    <div className="mt-4 rounded-xl overflow-hidden bg-slate-100 aspect-video relative group border border-slate-200">
+                                                        <video src={msg.videoUrl} controls className="w-full h-full object-contain rounded-xl"></video>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
+                                            {msg.role === 'user' && (
+                                                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center shrink-0 ml-3 mt-1 shadow-sm">
+                                                    <Icon name="User" className="w-4 h-4 text-slate-600" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {/* 正在生成时的进度提示 */}
+                                    {isGenerating && (
+                                        <div className="flex justify-start animate-fade-in">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-soft flex items-center justify-center shrink-0 mr-3 mt-1 shadow-sm">
+                                                <Icon name="Sparkles" className="w-4 h-4 text-primary-600" />
+                                            </div>
+                                            <div className="max-w-[85%] md:max-w-[75%] p-5 bg-white border border-slate-100 text-slate-800 rounded-2xl rounded-tl-sm shadow-sm relative overflow-hidden">
+                                                <div className="flex items-center gap-4 relative z-10">
+                                                    <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center shrink-0">
+                                                        <Icon name="Loader2" className="w-5 h-5 text-primary-500 animate-spin" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                                                            <span>正在处理视频生成任务...</span>
+                                                            <span className="text-primary-600">{progress}%</span>
+                                                        </div>
+                                                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-primary-500 transition-all duration-300 rounded-full" style={{ width: `${progress}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div ref={chatEndRef} />
+                                </div>
+                            )}
+
+                            {/* 底部多轮对话输入框 */}
+                            {(chatHistory.length > 0 || isGenerating) && (
+                                <div className="shrink-0 p-4 md:p-6 bg-surface-50 border-t border-slate-200 z-20 animate-slide-up">
+                                    <form onSubmit={handleChatSubmit} className="relative max-w-4xl mx-auto flex gap-3">
+                                        <div className="relative flex-1">
+                                            <input 
+                                                type="text"
+                                                value={chatInput}
+                                                onChange={(e) => setChatInput(e.target.value)}
+                                                placeholder="输入修改指令，例如：将画面调亮一些..."
+                                                className="w-full py-4 pl-6 pr-14 bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500/50 rounded-full text-slate-800 text-sm outline-none transition-all shadow-sm placeholder:text-slate-400"
+                                                disabled={isGenerating}
+                                            />
+                                            <button 
+                                                type="submit"
+                                                disabled={isGenerating || !chatInput.trim()}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 btn-gradient rounded-full flex items-center justify-center focus:outline-none"
+                                            >
+                                                <Icon name="Send" className="w-4 h-4 ml-0.5" />
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 模拟 登录页面 ---
+        const Login = ({ onLogin }) => {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setError('');
+                setIsLoading(true);
+
+                // 模拟网络请求和权限校验
+                setTimeout(() => {
+                    setIsLoading(false);
+                    if (email === 'admin@example.com' && password === 'password123') {
+                        onLogin();
+                    } else {
+                        setError('账号或密码不正确，请重试');
+                    }
+                }, 1000);
+            };
+
+            return (
+                <div className="min-h-screen bg-surface-50 flex flex-col justify-center items-center p-4 animate-fade-in relative overflow-hidden">
+                    {/* Soft gradient blobs */}
+                    <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary-100 rounded-full blur-[100px] animate-float opacity-70"></div>
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary-50 rounded-full blur-[100px] animate-float opacity-70" style={{animationDelay: '3s'}}></div>
+                    
+                    <div className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-3xl shadow-soft overflow-hidden relative z-10 animate-slide-up border border-white/50">
+                        <div className="p-8 md:p-10">
+                            <div className="flex justify-center mb-8">
+                                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
+                                    <Icon name="Hexagon" className="w-8 h-8 stroke-gradient" />
+                                </div>
+                            </div>
+                            
+                            <div className="text-center mb-10">
+                                <h1 className="text-3xl font-bold text-slate-800 mb-2">欢迎登录系统</h1>
+                                <p className="text-slate-500 text-sm">请输入您的工作邮箱和密码继续</p>
+                            </div>
+                            
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-50 rounded-2xl flex items-center gap-3 animate-fade-in">
+                                    <Icon name="AlertCircle" className="w-5 h-5 text-red-500 shrink-0" />
+                                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                                </div>
+                            )}
+
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-slate-700 ml-1">工作账号</label>
+                                    <div className="relative">
+                                        <input 
+                                            type="email" 
+                                            required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full px-5 py-4 bg-surface-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500/50 text-slate-800 outline-none transition-all placeholder:text-slate-400 shadow-inner"
+                                            placeholder="admin@example.com"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-slate-700 ml-1">密码</label>
+                                    <div className="relative">
+                                        <input 
+                                            type="password" 
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full px-5 py-4 bg-surface-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500/50 text-slate-800 outline-none transition-all placeholder:text-slate-400 shadow-inner"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                </div>
+                                <button 
+                                    type="submit" 
+                                    disabled={isLoading}
+                                    className="btn-gradient w-full py-4 mt-6 rounded-2xl font-bold focus:outline-none flex justify-center items-center gap-2"
+                                >
+                                    {isLoading ? <Icon name="Loader2" className="w-5 h-5 animate-spin" /> : <span>登录系统</span>}
+                                </button>
+                            </form>
+                            
+                            <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                                <p className="text-xs text-slate-400 mb-2">测试账号</p>
+                                <div className="inline-flex gap-4 text-sm font-medium text-slate-600 bg-slate-50 px-4 py-2 rounded-xl">
+                                    <span>admin@example.com</span>
+                                    <span className="text-slate-300">|</span>
+                                    <span>password123</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 模拟 历史记录/项目页面 ---
+        const HistoryPage = ({ onNavigate }) => {
+            const [mockProjects, setMockProjects] = useState([
+                { id: 1, title: '极简科技风 - 手表广告', updated: '2026年4月17日 更新', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80' },
+                { id: 2, title: '活力运动风 - 跑鞋宣传', updated: '2026年4月14日 更新', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80' },
+                { id: 3, title: '赛博朋克 - 游戏预告', updated: '2026年4月12日 更新', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80' },
+                { id: 4, title: '自然清新 - 护肤品', updated: '2025年7月21日 更新', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600&q=80' },
+                { id: 5, title: '复古胶片 - 咖啡厅', updated: '2025年7月21日 更新', image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80' },
+                { id: 6, title: '商务精英 - 笔记本', updated: '2025年6月11日 更新', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80' },
+            ]);
+            
+            const [activeMenuId, setActiveMenuId] = useState(null);
+            
+            // 点击外部关闭菜单
+            React.useEffect(() => {
+                const handleClickOutside = (e) => {
+                    if (!e.target.closest('.action-menu-container')) {
+                        setActiveMenuId(null);
+                    }
+                };
+                document.addEventListener('click', handleClickOutside);
+                return () => document.removeEventListener('click', handleClickOutside);
+            }, []);
+
+            const toggleMenu = (e, id) => {
+                e.stopPropagation();
+                setActiveMenuId(activeMenuId === id ? null : id);
+            };
+
+            const handleRename = (e, id) => {
+                e.stopPropagation();
+                setActiveMenuId(null);
+                const newTitle = prompt('请输入新的项目名称：');
+                if (newTitle && newTitle.trim()) {
+                    setMockProjects(prev => prev.map(p => p.id === id ? { ...p, title: newTitle.trim() } : p));
+                }
+            };
+
+            const handleDelete = (e, id) => {
+                e.stopPropagation();
+                setActiveMenuId(null);
+                if (confirm('确定要删除这个项目吗？此操作无法恢复。')) {
+                    setMockProjects(prev => prev.filter(p => p.id !== id));
+                }
+            };
+
+            return (
+                <div className="flex flex-col h-screen bg-surface-50 animate-fade-in relative">
+                    <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-6 md:px-10 shrink-0 z-10 shadow-sm relative">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 flex items-center justify-center">
+                                <Icon name="Folder" className="w-6 h-6 text-gradient" />
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-800 tracking-tight">我的项目</h1>
+                        </div>
+                        <button className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:border-primary-200 hover:bg-primary-50 text-slate-600 hover:text-primary-600 transition-all focus:outline-none flex items-center gap-2 shadow-sm">
+                            <Icon name="SlidersHorizontal" className="w-4 h-4" />
+                            <span className="text-sm font-medium hidden md:inline">筛选排序</span>
+                        </button>
+                    </header>
+                    
+                    <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar relative">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative z-10">
+                        {/* 新建项目卡片 */}
+                        <div className="flex flex-col group cursor-pointer animate-slide-up" style={{ animationDelay: '50ms' }} onClick={() => onNavigate('videoGen')}>
+                            <div className="aspect-[4/3] bg-white border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center group-hover:border-primary-400 transition-all duration-300 p-6 text-center shadow-sm group-hover:shadow-glow group-hover:-translate-y-1">
+                                <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <Icon name="Plus" className="w-8 h-8 stroke-gradient" strokeWidth={3} />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800">创建新项目</h3>
+                                <p className="text-sm text-slate-500 mt-1">从零开始生成视频广告</p>
+                            </div>
+                            {/* 占位，为了和下面项目的文字高度对齐 */}
+                            <div className="mt-4 px-2 opacity-0">
+                                <h3 className="font-bold text-base">Placeholder</h3>
+                                <p className="text-xs mt-1">Placeholder</p>
+                            </div>
+                        </div>
+
+                        {/* 历史项目卡片 */}
+                        {mockProjects.map((project, index) => (
+                            <div key={project.id} className="flex flex-col group cursor-pointer animate-slide-up" style={{ animationDelay: `${(index + 2) * 50}ms` }}>
+                                <div className="aspect-[4/3] bg-white rounded-3xl overflow-hidden relative transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 border border-slate-100">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                                    <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
+                                    
+                                    <div className="absolute top-0 left-0 w-full p-4 z-20 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span className="bg-white/90 backdrop-blur-sm text-slate-800 text-xs px-3 py-1 rounded-full font-bold shadow-sm">已完成</span>
+                                        <div className="relative action-menu-container">
+                                            <button 
+                                                onClick={(e) => toggleMenu(e, project.id)}
+                                                className="p-2 bg-white/90 backdrop-blur-sm hover:bg-white text-slate-600 hover:text-primary-600 rounded-full transition-all focus:outline-none shadow-sm relative z-[60]"
+                                            >
+                                                <Icon name="MoreHorizontal" className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* 下拉菜单放在这里，使其脱离被 overflow-hidden 截断的风险 */}
+                                {activeMenuId === project.id && (
+                                    <div className="absolute right-4 top-16 w-36 bg-white rounded-xl shadow-soft border border-slate-100 overflow-hidden z-[100] animate-fade-in origin-top-right">
+                                        <button 
+                                            onClick={(e) => handleRename(e, project.id)}
+                                            className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors flex items-center gap-2"
+                                        >
+                                            <Icon name="Edit2" className="w-4 h-4" />
+                                            重命名
+                                        </button>
+                                        <div className="h-px bg-slate-100"></div>
+                                        <button 
+                                            onClick={(e) => handleDelete(e, project.id)}
+                                            className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                                        >
+                                            <Icon name="Trash2" className="w-4 h-4" />
+                                            删除项目
+                                        </button>
+                                    </div>
+                                )}
+                                
+                                <div className="mt-4 px-2">
+                                    <h3 className="font-bold text-slate-800 truncate text-base group-hover:text-primary-600 transition-colors">{project.title}</h3>
+                                    <p className="text-xs text-slate-500 mt-1 font-medium">{project.updated}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 简单的路由控制器 ---
+        const App = () => {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [currentPage, setCurrentPage] = useState('videoGen'); // 默认进入视频生成
+
+            const handleLogout = () => {
+                setIsAuthenticated(false);
+                setCurrentPage('videoGen');
+            };
+
+            const MainLayout = ({ children }) => {
+                const navItems = [
+                    { id: 'videoGen', icon: 'Wand2', label: '视频生成' },
+                    { id: 'history', icon: 'Folder', label: '项目管理' },
+                    { id: 'brandKit', icon: 'Palette', label: '品牌套件' }
+                ];
+
+                return (
+                    <div className="flex h-screen bg-surface-50 overflow-hidden relative">
+                        
+                        {/* 左侧全局导航栏 - 浅色悬浮毛玻璃风格 */}
+                        <aside className="w-24 bg-white/60 backdrop-blur-2xl border-r border-white/40 flex flex-col items-center py-8 shrink-0 z-20 shadow-glass">
+                            <div className="w-12 h-12 bg-white flex items-center justify-center mb-12 cursor-pointer transition-transform hover:scale-105">
+                                <Icon name="Hexagon" className="w-7 h-7 stroke-gradient" />
+                            </div>
+                            
+                            <nav className="flex-1 flex flex-col gap-6 w-full px-4 items-center">
+                                {navItems.map(item => (
+                                    <button 
+                                        key={item.id}
+                                        onClick={() => setCurrentPage(item.id)}
+                                        title={item.label}
+                                        className="w-full flex flex-col items-center justify-center focus:outline-none group relative"
+                                    >
+                                        <div className={`w-12 h-12 rounded-[20px] flex items-center justify-center transition-all duration-200 ${currentPage === item.id ? 'bg-transparent font-bold' : 'bg-transparent text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}>
+                                            <Icon name={item.icon} className={`w-5 h-5 md:w-6 md:h-6 ${currentPage === item.id ? 'stroke-gradient' : ''}`} />
+                                        </div>
+                                        {/* Tooltip */}
+                                        <span className="absolute left-full ml-4 px-3 py-2 bg-white/90 backdrop-blur-md border border-white text-slate-700 text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap z-50 shadow-glass translate-x-[-10px] group-hover:translate-x-0">
+                                            {item.label}
+                                        </span>
+                                    </button>
+                                ))}
+                            </nav>
+
+                            <div className="mt-auto flex flex-col gap-6 w-full px-4 items-center">
+                                <button className="w-full flex items-center justify-center focus:outline-none group relative">
+                                    <div className="w-12 h-12 rounded-[20px] flex items-center justify-center transition-all duration-200 bg-transparent text-slate-400 hover:bg-slate-50 hover:text-slate-700">
+                                        <Icon name="HelpCircle" className="w-5 h-5 md:w-6 md:h-6" />
+                                    </div>
+                                    <span className="absolute left-full ml-4 px-3 py-2 bg-white/90 backdrop-blur-md border border-white text-slate-700 text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap z-50 shadow-glass translate-x-[-10px] group-hover:translate-x-0">帮助中心</span>
+                                </button>
+                                <button 
+                                    onClick={handleLogout}
+                                    title="退出登录"
+                                    className="w-full flex items-center justify-center focus:outline-none group relative"
+                                >
+                                    <div className="w-12 h-12 rounded-[20px] flex items-center justify-center transition-all duration-200 bg-transparent text-slate-400 hover:bg-red-50 hover:text-red-500">
+                                        <Icon name="LogOut" className="w-5 h-5 md:w-6 md:h-6" />
+                                    </div>
+                                    <span className="absolute left-full ml-4 px-3 py-2 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap z-50 shadow-glass translate-x-[-10px] group-hover:translate-x-0">退出登录</span>
+                                </button>
+                            </div>
+                        </aside>
+
+                        {/* 主内容区域 */}
+                        <main className="flex-1 overflow-hidden relative bg-surface-50">
+                            {/* 全局柔和背景装饰 */}
+                            <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary-100/50 rounded-full blur-[120px] pointer-events-none"></div>
+                            <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-secondary-50/50 rounded-full blur-[100px] pointer-events-none"></div>
+                            {children}
+                        </main>
+                    </div>
+                );
+            };
+
+            return (
+                <React.Fragment>
+                    {!isAuthenticated ? (
+                        <Login onLogin={() => setIsAuthenticated(true)} />
+                    ) : (
+                        <MainLayout>
+                            {currentPage === 'history' && <HistoryPage onNavigate={setCurrentPage} />}
+                            {currentPage === 'brandKit' && <BrandKitEditor onNavigate={setCurrentPage} />}
+                            {currentPage === 'videoGen' && <VideoGenerator onNavigate={setCurrentPage} />}
+                        </MainLayout>
+                    )}
+                </React.Fragment>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <ErrorBoundary>
+                <App />
+            </ErrorBoundary>
+        );
+    </script>
+</body>
+</html>
