@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String     // 在实际项目中应加密存储
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  projects  Project[]
+  brandKits BrandKit[]
+}
+
+model BrandKit {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 品牌套件参数 (JSON 格式存储，方便扩展)
+  visual      String?  // 视觉要素 JSON
+  scene       String?  // 画面要素 JSON
+  audio       String?  // 声音质感 JSON
+  
+  projects    Project[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  title       String
+  status      String        @default("DRAFT") // DRAFT, GENERATING, COMPLETED
+  thumbnail   String?
+  videoUrl    String?
+  
+  // 关联
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brandKitId  String?
+  brandKit    BrandKit?     @relation(fields: [brandKitId], references: [id], onDelete: SetNull)
+  
+  // 生成参数
+  script      String?
+  duration    String?
+  ratio       String?
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  messages    ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  role      String   // 'user' or 'ai'
+  content   String
+  videoUrl  String?
+  
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+}
