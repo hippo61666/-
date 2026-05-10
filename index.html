@@ -623,20 +623,17 @@
                             <h1 className="text-xl font-bold text-slate-800 tracking-tight">视频生成</h1>
                         </div>
                         
-                        {/* 当处于对话模式时，显示"开启新对话"按钮 */}
-                        {(chatHistory.length > 0 || isGenerating) && (
-                            <button 
-                                onClick={() => {
-                                    setChatHistory([]);
-                                    setChatInput('');
-                                    setIsGenerating(false);
-                                }}
-                                className="px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-primary-200 hover:bg-primary-50 text-slate-600 hover:text-primary-600 transition-all focus:outline-none flex items-center gap-2 shadow-sm text-sm font-bold"
-                            >
-                                <Icon name="Plus" className="w-4 h-4" />
-                                开启新项目
-                            </button>
-                        )}
+                        <button 
+                            onClick={() => {
+                                setChatHistory([]);
+                                setChatInput('');
+                                setIsGenerating(false);
+                            }}
+                            className="px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-primary-200 hover:bg-primary-50 text-slate-600 hover:text-primary-600 transition-all focus:outline-none flex items-center gap-2 shadow-sm text-sm font-bold"
+                        >
+                            <Icon name="Plus" className="w-4 h-4" />
+                            开启新项目
+                        </button>
                     </header>
 
                     <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
