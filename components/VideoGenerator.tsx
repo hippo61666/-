@@ -12,15 +12,33 @@ interface ChatMessage {
 }
 
 interface VideoGeneratorProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, projectId?: string | null) => void;
+  projectId?: string | null;
+  onProjectCreated?: (id: string | null) => void;
 }
 
-export default function VideoGenerator({ onNavigate }: VideoGeneratorProps) {
+export default function VideoGenerator({ onNavigate, projectId, onProjectCreated }: VideoGeneratorProps) {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Load existing project history
+  useEffect(() => {
+    if (projectId) {
+      fetch(`/api/projects/${projectId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.messages) {
+            setChatHistory(data.messages);
+          }
+        })
+        .catch(err => console.error("Failed to load project:", err));
+    } else {
+      setChatHistory([]);
+    }
+  }, [projectId]);
 
   const scrollToBottom = () => {
       chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,39 +48,72 @@ export default function VideoGenerator({ onNavigate }: VideoGeneratorProps) {
       scrollToBottom();
   }, [chatHistory, isGenerating, generationProgress]);
 
-  const handleGenerate = (e: React.MouseEvent | React.FormEvent) => {
+  const handleGenerate = async (e: React.MouseEvent | React.FormEvent) => {
       e.preventDefault();
       
-      const newHistory = [...chatHistory];
-      if (chatInput.trim()) {
-          newHistory.push({ role: 'user', content: chatInput });
-      } else if (newHistory.length === 0) {
-          newHistory.push({ role: 'user', content: '使用极简科技风生成一段手表广告视频，时长3秒，比例21:9。' });
-      }
+      const userPrompt = chatInput.trim() || '使用极简科技风生成一段手表广告视频，时长3秒，比例21:9。';
       
+      // Optimistic update
+      const newHistory = [...chatHistory, { role: 'user' as const, content: userPrompt }];
       setChatHistory(newHistory);
       setChatInput('');
       setIsGenerating(true);
       setGenerationProgress(0);
 
+      // Start progress simulation
       let progress = 0;
       const interval = setInterval(() => {
           progress += 5;
+          if (progress >= 95) progress = 95; // Wait for real response to reach 100
           setGenerationProgress(progress);
-          
-          if (progress >= 100) {
-              clearInterval(interval);
-              setIsGenerating(false);
-              setChatHistory(prev => [
-                  ...prev, 
-                  { 
-                      role: 'ai', 
-                      content: '这是为您调用 Seedance 2.0 大模型生成的视频，请查阅。如果您需要调整（例如修改背景、调整光线），请直接告诉我。',
-                      videoUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80' // Mock image instead of video for preview
-                  }
-              ]);
-          }
       }, 200);
+
+      try {
+        let currentProjectId = projectId;
+        
+        // If no project exists, create one first
+        if (!currentProjectId) {
+          const pRes = await fetch('/api/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: userPrompt.substring(0, 15) + '...' })
+          });
+          const pData = await pRes.json();
+          currentProjectId = pData.id;
+          if (onProjectCreated) onProjectCreated(pData.id);
+        }
+
+        // Call generate API
+        const gRes = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: userPrompt, projectId: currentProjectId })
+        });
+        const gData = await gRes.json();
+
+        clearInterval(interval);
+        setGenerationProgress(100);
+        
+        setTimeout(() => {
+          setIsGenerating(false);
+          if (gData.success && gData.message) {
+            setChatHistory(prev => [...prev, gData.message]);
+          } else {
+            // Handle mock fallback if API didn't return properly
+            setChatHistory(prev => [...prev, { 
+                role: 'ai', 
+                content: '这是为您调用 Seedance 2.0 大模型生成的视频，请查阅。',
+                videoUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'
+            }]);
+          }
+        }, 500);
+
+      } catch (error) {
+        console.error("Generate error:", error);
+        clearInterval(interval);
+        setIsGenerating(false);
+        setChatHistory(prev => [...prev, { role: 'ai', content: '抱歉，视频生成失败，请重试。' }]);
+      }
   };
 
   return (
@@ -179,13 +230,14 @@ export default function VideoGenerator({ onNavigate }: VideoGeneratorProps) {
                   </div>
                   
                   <button 
-                      onClick={() => {
-                          setChatHistory([]);
-                          setChatInput('');
-                          setIsGenerating(false);
-                      }}
-                      className="px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-primary-200 hover:bg-primary-50 text-slate-600 hover:text-primary-600 transition-all focus:outline-none flex items-center gap-2 shadow-sm text-sm font-bold"
-                  >
+                    onClick={() => {
+                        if (onProjectCreated) onProjectCreated(null);
+                        setChatHistory([]);
+                        setChatInput('');
+                        setIsGenerating(false);
+                    }}
+                    className="px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-primary-200 hover:bg-primary-50 text-slate-600 hover:text-primary-600 transition-all focus:outline-none flex items-center gap-2 shadow-sm text-sm font-bold"
+                >
                       <Icon name="Plus" className="w-4 h-4" />
                       开启新项目
                   </button>

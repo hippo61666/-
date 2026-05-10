@@ -5,7 +5,7 @@ import { Icon } from '@/components/ui/Icon';
 
 interface GlobalSidebarProps {
   activePage: string;
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, projectId?: string | null) => void;
   onLogout: () => void;
 }
 
@@ -26,7 +26,7 @@ export default function GlobalSidebar({ activePage, onNavigate, onLogout }: Glob
               {menuItems.map(item => (
                   <button 
                       key={item.id}
-                      onClick={() => onNavigate(item.id)}
+                      onClick={() => onNavigate(item.id, null)}
                       className={`group flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all duration-300 focus:outline-none relative w-full ${
                           activePage === item.id 
                               ? 'bg-transparent font-bold' 
