@@ -755,7 +755,7 @@
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 space-y-6 custom-scrollbar relative z-10">
+                                <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 pb-32 space-y-6 custom-scrollbar relative z-10">
                                     {/* 现代聊天气泡 */}
                                     {chatHistory.map((msg, idx) => (
                                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
@@ -825,7 +825,7 @@
 
                             {/* 底部多轮对话输入框 */}
                             {(chatHistory.length > 0 || isGenerating) && (
-                                <div className="shrink-0 p-4 md:p-6 bg-surface-50 border-t border-slate-200 z-20 animate-slide-up">
+                                <div className="absolute bottom-0 left-0 w-full p-4 md:p-6 bg-surface-50/90 backdrop-blur-md border-t border-slate-200 z-20 animate-slide-up">
                                     <form onSubmit={handleChatSubmit} className="relative max-w-4xl mx-auto flex gap-3">
                                         <div className="relative flex-1">
                                             <input 
