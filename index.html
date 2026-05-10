@@ -752,7 +752,7 @@
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 pb-32 space-y-6 custom-scrollbar relative z-10">
+                                <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 pb-40 space-y-6 custom-scrollbar relative z-10">
                                     {/* 现代聊天气泡 */}
                                     {chatHistory.map((msg, idx) => (
                                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
@@ -816,7 +816,7 @@
                                             </div>
                                         </div>
                                     )}
-                                    <div ref={chatEndRef} />
+                                    <div ref={chatEndRef} className="h-10" />
                                 </div>
                             )}
 
