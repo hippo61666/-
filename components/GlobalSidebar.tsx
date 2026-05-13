@@ -11,9 +11,9 @@ interface GlobalSidebarProps {
 
 export default function GlobalSidebar({ activePage, onNavigate, onLogout }: GlobalSidebarProps) {
   const menuItems = [
+      { id: 'brandKit', icon: 'Palette', label: '企业品牌套件' },
       { id: 'videoGen', icon: 'Wand2', label: '视频生成' },
-      { id: 'history', icon: 'Folder', label: '我的项目' },
-      { id: 'brandKit', icon: 'Palette', label: '品牌套件' }
+      { id: 'history', icon: 'Folder', label: '我的项目' }
   ];
 
   return (
