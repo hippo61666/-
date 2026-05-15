@@ -36,7 +36,12 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
               '/spd-vi/96f648d1-234e-40f1-89ab-21f62a546904.png'
           ]
       },
-      2: {} // 山下有松的数据，默认为空
+      2: { // 山下有松的数据
+          'logo': [
+              '/spd-vi/a7cd3c66-e1fe-4ba9-a38c-efb8ca70d41c.png',
+              '/spd-vi/cda59055-9003-4bc9-8ea4-323ff76587e6.png'
+          ]
+      }
   });
 
   // 获取当前选中的套件图片数据
@@ -356,12 +361,17 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
                                 ) : (
                                   <div className="flex flex-wrap gap-4 items-start justify-start">
                                       {/* 已上传图片列表 */}
-                                      {uploadedImages[item.id]?.map((imgUrl, index) => (
-                                          <div key={index} 
-                                              className="relative w-24 h-24 rounded-xl border border-white/10 overflow-hidden group bg-white cursor-pointer hover:ring-2 hover:ring-[#FF2A6D]/50 transition-all"
-                                              onClick={() => setPreviewImage(imgUrl)}
-                                          >
-                                              <img src={imgUrl} alt={`${item.label} ${index + 1}`} className="w-full h-full object-contain p-2" />
+                                        {uploadedImages[item.id]?.map((imgUrl, index) => (
+                                            <div 
+                                                key={index} 
+                                                className="relative w-24 h-24 rounded-xl border border-white/10 overflow-hidden group bg-transparent cursor-pointer hover:ring-2 hover:ring-[#FF2A6D]/50 transition-all"
+                                                onClick={() => setPreviewImage(imgUrl)}
+                                            >
+                                                <img 
+                                                    src={imgUrl} 
+                                                    alt={`${item.label} ${index + 1}`} 
+                                                    className="w-full h-full object-cover"
+                                                />
                                               <button 
                                                   onClick={(e) => {
                                                       e.stopPropagation();
@@ -487,6 +497,8 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
                           >
                               {kit.name === '浦发银行' ? (
                                   <img src="https://companieslogo.com/img/orig/600000.SS_BIG-13c7d579.png" alt="浦发银行" className="w-full h-full object-contain p-2 bg-white" />
+                              ) : kit.name === '山下有松' ? (
+                                  <img src="/spd-vi/a7cd3c66-e1fe-4ba9-a38c-efb8ca70d41c.png" alt="山下有松" className="w-full h-full object-cover" />
                               ) : (
                                   <Icon name="Palette" className={`w-6 h-6 md:w-8 md:h-8 transition-colors ${activeKitId === kit.id ? 'text-[#FF2A6D]' : 'text-white/30 group-hover:text-white/50'}`} />
                               )}
