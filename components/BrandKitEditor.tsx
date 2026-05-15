@@ -41,6 +41,11 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
               '/spd-vi/a7cd3c66-e1fe-4ba9-a38c-efb8ca70d41c.png',
               '/spd-vi/cda59055-9003-4bc9-8ea4-323ff76587e6.png',
               '/spd-vi/8468eba9-9863-4947-9752-a2507fa865f3.png'
+          ],
+          'vi_derivatives': [
+              '/spd-vi/fdea1ada-e9a5-45ce-a38d-30b539143829.png',
+              '/spd-vi/bb1fc36a-0a6c-463d-aa8d-9a6137f19850.png',
+              '/spd-vi/1a7b49c8-e2c4-4ffe-b401-4ffb24cda388.png'
           ]
       }
   });
@@ -133,7 +138,14 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
       });
   };
 
-  // 新增：浦发银行预设颜色数据
+  // 新增：山下有松预设颜色数据
+  const shanxiaColors = {
+      standard: [
+          { name: 'Beige', hex: '#E2E2D7', label: 'Brand Primary Beige' },
+          { name: 'Moss', hex: '#778456', label: 'Brand Moss Green' },
+          { name: 'Earth', hex: '#A8612A', label: 'Brand Earth Brown' }
+      ]
+  };
   const presetColors = {
       standard: [
           { name: 'PANTONE 294', hex: '#003366', rgb: 'R7 G38 B88', cmyk: 'C100 M70 Y5 K40' },
@@ -272,6 +284,23 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
                                             </div>
                                         </div>
                                       </div>
+                                    ) : activeKitId === 2 ? (
+                                        <div className="w-full flex flex-col gap-6 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <div>
+                                                <h5 className="text-xs text-white/50 mb-3 uppercase tracking-wider">品牌主色</h5>
+                                                <div className="flex flex-wrap gap-4">
+                                                    {shanxiaColors.standard.map((color, idx) => (
+                                                        <div key={idx} className="flex flex-col gap-3">
+                                                            <div className="w-36 h-32 rounded-xl shadow-glass border border-white/10 transition-transform hover:scale-105" style={{ backgroundColor: color.hex }}></div>
+                                                            <span className="text-xs text-white/60 font-medium text-center">{color.label}</span>
+                                                        </div>
+                                                    ))}
+                                                    <div className="w-36 h-32 rounded-xl border border-white/10 border-dashed flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors">
+                                                        <Icon name="Plus" className="w-6 h-6 text-white/20" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     ) : (
                                         <div className="w-full flex flex-wrap gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 border-dashed">
                                             <div className="w-full text-center py-12">
@@ -283,95 +312,83 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
                                             </div>
                                         </div>
                                     )
-                                ) : (item as any).isTypographyPalette ? (
-                                    activeKitId === 1 ? (
-                                        <div className="w-full flex flex-col gap-6 p-4 bg-white/5 rounded-2xl border border-white/10">
-                                            <div className="flex flex-wrap gap-4">
-                                            {/* 黑体家族 */}
-                                            <div className="flex-1 min-w-[280px] p-6 flex flex-col gap-4 rounded-xl shadow-glass border border-white/10 bg-[#1a0f14]/50 hover:bg-[#1a0f14]/80 transition-colors">
-                                                <div className="flex justify-between items-center">
-                                                    <h5 className="text-white/50 text-sm uppercase tracking-wider">中文标准字体</h5>
-                                                    <span className="text-[10px] text-white/40 bg-white/5 px-2 py-1 rounded border border-white/10">PRIMARY</span>
+                                ) : (item as any).isTypographyPalette && activeKitId === 1 ? (
+                                    <div className="w-full flex flex-col gap-6 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                        <div className="flex flex-wrap gap-4">
+                                        {/* 黑体家族 */}
+                                        <div className="flex-1 min-w-[280px] p-6 flex flex-col gap-4 rounded-xl shadow-glass border border-white/10 bg-[#1a0f14]/50 hover:bg-[#1a0f14]/80 transition-colors">
+                                            <div className="flex justify-between items-center">
+                                                <h5 className="text-white/50 text-sm uppercase tracking-wider">中文标准字体</h5>
+                                                <span className="text-[10px] text-white/40 bg-white/5 px-2 py-1 rounded border border-white/10">PRIMARY</span>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-white font-bold text-3xl font-sans tracking-wide">黑体家族</div>
+                                                <div className="text-white/40 text-sm tracking-wider uppercase">Heiti Family</div>
+                                            </div>
+                                            <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-light text-2xl group-hover:text-[#FF2A6D] transition-colors">Light</span>
+                                                    <span className="text-xs text-white/40 mb-1">标题 / 正文</span>
                                                 </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="text-white font-bold text-3xl font-sans tracking-wide">黑体家族</div>
-                                                    <div className="text-white/40 text-sm tracking-wider uppercase">Heiti Family</div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-normal text-2xl group-hover:text-[#FF2A6D] transition-colors">Regular</span>
+                                                    <span className="text-xs text-white/40 mb-1">正文</span>
                                                 </div>
-                                                <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-light text-2xl group-hover:text-[#FF2A6D] transition-colors">Light</span>
-                                                        <span className="text-xs text-white/40 mb-1">标题 / 正文</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-normal text-2xl group-hover:text-[#FF2A6D] transition-colors">Regular</span>
-                                                        <span className="text-xs text-white/40 mb-1">正文</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-medium text-2xl group-hover:text-[#FF2A6D] transition-colors">Medium</span>
-                                                        <span className="text-xs text-white/40 mb-1">小标题</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-bold text-2xl group-hover:text-[#FF2A6D] transition-colors">Bold</span>
-                                                        <span className="text-xs text-white/40 mb-1">主标题</span>
-                                                    </div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-medium text-2xl group-hover:text-[#FF2A6D] transition-colors">Medium</span>
+                                                    <span className="text-xs text-white/40 mb-1">小标题</span>
+                                                </div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-bold text-2xl group-hover:text-[#FF2A6D] transition-colors">Bold</span>
+                                                    <span className="text-xs text-white/40 mb-1">主标题</span>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            {/* Helvetica Neue */}
-                                            <div className="flex-1 min-w-[280px] p-6 flex flex-col gap-4 rounded-xl shadow-glass border border-white/10 bg-[#1a0f14]/50 hover:bg-[#1a0f14]/80 transition-colors">
-                                                <div className="flex justify-between items-center">
-                                                    <h5 className="text-white/50 text-sm uppercase tracking-wider">英文/数字标准字体</h5>
-                                                    <span className="text-[10px] text-white/40 bg-white/5 px-2 py-1 rounded border border-white/10">SECONDARY</span>
+                                        {/* Helvetica Neue */}
+                                        <div className="flex-1 min-w-[280px] p-6 flex flex-col gap-4 rounded-xl shadow-glass border border-white/10 bg-[#1a0f14]/50 hover:bg-[#1a0f14]/80 transition-colors">
+                                            <div className="flex justify-between items-center">
+                                                <h5 className="text-white/50 text-sm uppercase tracking-wider">英文/数字标准字体</h5>
+                                                <span className="text-[10px] text-white/40 bg-white/5 px-2 py-1 rounded border border-white/10">SECONDARY</span>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-white font-bold text-3xl tracking-wide" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Helvetica Neue</div>
+                                                <div className="text-white/40 text-sm tracking-wider uppercase">English & Numbers</div>
+                                            </div>
+                                            <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-light text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Light</span>
+                                                    <span className="text-xs text-white/40 mb-1">标题 / 正文</span>
                                                 </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="text-white font-bold text-3xl tracking-wide" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Helvetica Neue</div>
-                                                    <div className="text-white/40 text-sm tracking-wider uppercase">English & Numbers</div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-normal text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Regular</span>
+                                                    <span className="text-xs text-white/40 mb-1">正文</span>
                                                 </div>
-                                                <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-light text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Light</span>
-                                                        <span className="text-xs text-white/40 mb-1">标题 / 正文</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-normal text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Regular</span>
-                                                        <span className="text-xs text-white/40 mb-1">正文</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-medium text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Medium</span>
-                                                        <span className="text-xs text-white/40 mb-1">小标题</span>
-                                                    </div>
-                                                    <div className="flex justify-between items-end text-white/80 group">
-                                                        <span className="font-bold text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Bold</span>
-                                                        <span className="text-xs text-white/40 mb-1">主标题</span>
-                                                    </div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-medium text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Medium</span>
+                                                    <span className="text-xs text-white/40 mb-1">小标题</span>
+                                                </div>
+                                                <div className="flex justify-between items-end text-white/80 group">
+                                                    <span className="font-bold text-2xl group-hover:text-[#FF2A6D] transition-colors" style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>Bold</span>
+                                                    <span className="text-xs text-white/40 mb-1">主标题</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    ) : (
-                                        <div className="w-full flex flex-wrap gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 border-dashed">
-                                            <div className="w-full text-center py-12">
-                                                <Icon name="Type" className="w-8 h-8 text-white/20 mx-auto mb-3" />
-                                                <p className="text-white/40 text-sm">暂无字体数据</p>
-                                                <button className="mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 text-white/60 text-sm rounded-lg transition-colors">
-                                                    添加字体配置
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )
+                                </div>
                                 ) : (
                                   <div className="flex flex-wrap gap-4 items-start justify-start">
                                       {/* 已上传图片列表 */}
                                         {uploadedImages[item.id]?.map((imgUrl, index) => (
                                             <div 
                                                 key={index} 
-                                                className="relative w-24 h-24 rounded-xl border border-white/10 overflow-hidden group bg-transparent cursor-pointer hover:ring-2 hover:ring-[#FF2A6D]/50 transition-all"
+                                                className={`relative w-24 h-24 rounded-xl border border-white/10 overflow-hidden group cursor-pointer hover:ring-2 hover:ring-[#FF2A6D]/50 transition-all ${activeKitId === 1 && item.id === 'logo' ? 'bg-white p-2' : 'bg-transparent'}`}
                                                 onClick={() => setPreviewImage(imgUrl)}
                                             >
                                                 <img 
                                                     src={imgUrl} 
                                                     alt={`${item.label} ${index + 1}`} 
-                                                    className="w-full h-full object-cover"
+                                                    className={`w-full h-full ${activeKitId === 1 && item.id === 'logo' ? 'object-contain' : 'object-cover'}`}
                                                 />
                                               <button 
                                                   onClick={(e) => {

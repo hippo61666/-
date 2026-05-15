@@ -49,6 +49,10 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
     duration: '8s'
   });
 
+  // 新增：产品和人物图片上传状态
+  const [productImage, setProductImage] = useState<string | null>(null);
+  const [personImage, setPersonImage] = useState<string | null>(null);
+
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const brandKits = ['浦发银行', '山下有松'];
@@ -491,14 +495,57 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                               </div>
 
                               <div className="flex flex-row md:flex-row items-center justify-end gap-2 md:border-l border-white/10 md:pl-3 w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/5">
-                                  <button className="flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl hover:bg-white/10 transition-colors shrink-0 hidden md:flex">
-                                      <Icon name="Plus" className="w-4 h-4 text-white/50 mb-1" />
-                                      <span className="text-[10px] tracking-wider text-white/50">产品</span>
-                                  </button>
-                                  <button className="flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl hover:bg-white/10 transition-colors shrink-0 hidden md:flex">
-                                      <Icon name="Plus" className="w-4 h-4 text-white/50 mb-1" />
-                                      <span className="text-[10px] tracking-wider text-white/50">人物</span>
-                                  </button>
+                                  {productImage ? (
+                                      <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl overflow-hidden group shrink-0 hidden md:flex">
+                                          <img src={productImage} alt="Product" className="w-full h-full object-cover" />
+                                          <button 
+                                              onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setProductImage(null);
+                                              }}
+                                              className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                          >
+                                              <Icon name="X" className="w-5 h-5 text-white" />
+                                          </button>
+                                      </div>
+                                  ) : (
+                                      <label className="flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl hover:bg-white/10 transition-colors shrink-0 hidden md:flex cursor-pointer relative overflow-hidden group">
+                                          <Icon name="Plus" className="w-4 h-4 text-white/50 mb-1 group-hover:text-white/80 transition-colors" />
+                                          <span className="text-[10px] tracking-wider text-white/50 group-hover:text-white/80 transition-colors">产品</span>
+                                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                              if(e.target.files && e.target.files[0]) {
+                                                  const url = URL.createObjectURL(e.target.files[0]);
+                                                  setProductImage(url);
+                                              }
+                                          }}/>
+                                      </label>
+                                  )}
+                                  
+                                  {personImage ? (
+                                      <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl overflow-hidden group shrink-0 hidden md:flex">
+                                          <img src={personImage} alt="Person" className="w-full h-full object-cover" />
+                                          <button 
+                                              onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setPersonImage(null);
+                                              }}
+                                              className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                          >
+                                              <Icon name="X" className="w-5 h-5 text-white" />
+                                          </button>
+                                      </div>
+                                  ) : (
+                                      <label className="flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl hover:bg-white/10 transition-colors shrink-0 hidden md:flex cursor-pointer relative overflow-hidden group">
+                                          <Icon name="Plus" className="w-4 h-4 text-white/50 mb-1 group-hover:text-white/80 transition-colors" />
+                                          <span className="text-[10px] tracking-wider text-white/50 group-hover:text-white/80 transition-colors">人物</span>
+                                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                              if(e.target.files && e.target.files[0]) {
+                                                  const url = URL.createObjectURL(e.target.files[0]);
+                                                  setPersonImage(url);
+                                              }
+                                          }}/>
+                                      </label>
+                                  )}
                                   <button 
                                       onClick={handleGenerate}
                                       className="h-12 w-12 md:h-16 md:w-16 shrink-0 btn-gradient rounded-xl md:rounded-2xl flex items-center justify-center shadow-glow group focus:outline-none"
