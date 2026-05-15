@@ -39,7 +39,8 @@ export default function BrandKitEditor({ onNavigate }: BrandKitEditorProps) {
       2: { // 山下有松的数据
           'logo': [
               '/spd-vi/a7cd3c66-e1fe-4ba9-a38c-efb8ca70d41c.png',
-              '/spd-vi/cda59055-9003-4bc9-8ea4-323ff76587e6.png'
+              '/spd-vi/cda59055-9003-4bc9-8ea4-323ff76587e6.png',
+              '/spd-vi/8468eba9-9863-4947-9752-a2507fa865f3.png'
           ]
       }
   });
