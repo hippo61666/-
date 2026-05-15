@@ -18,6 +18,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     
     return NextResponse.json(project);
   } catch (error) {
+    console.error('Error fetching project:', error);
     return NextResponse.json({ error: 'Failed to fetch project' }, { status: 500 });
   }
 }
@@ -42,6 +43,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     });
     return NextResponse.json(project);
   } catch (error) {
+    console.error('Error updating project:', error);
     return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
   }
 }
