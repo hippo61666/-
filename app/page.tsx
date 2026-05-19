@@ -7,6 +7,7 @@ import VideoGenerator from '@/components/VideoGenerator';
 import HistoryPage from '@/components/HistoryPage';
 import BrandKitEditor from '@/components/BrandKitEditor';
 import SkillPage from '@/components/SkillPage';
+import ImageGenerator from '@/components/ImageGenerator';
 
 import { Icon } from '@/components/ui/Icon';
 
@@ -32,6 +33,8 @@ export default function Home() {
     switch (activePage) {
       case 'videoGen':
         return <VideoGenerator onNavigate={handleNavigate} projectId={selectedProjectId} onProjectCreated={setSelectedProjectId} />;
+      case 'imageGen':
+        return <ImageGenerator />;
       case 'history':
         return <HistoryPage onNavigate={handleNavigate} />;
       case 'brandKit':
