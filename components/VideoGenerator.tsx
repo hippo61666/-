@@ -272,8 +272,8 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                                   <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 tracking-[0.15em]" style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif' }}>帮你把</span>
                               </div>
                               <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 tracking-[0.15em]" style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif' }}>
-                                  任何产品变为广告
-                              </div>
+                                产品变为广告
+                            </div>
                           </h1>
                       </div>
 
@@ -289,8 +289,8 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                                           value={chatInput}
                                           onChange={(e) => setChatInput(e.target.value)}
                                           className="w-full bg-transparent border-none text-white text-sm md:text-base focus:outline-none placeholder:text-white/30 font-medium"
-                                          placeholder="描述广告中的剧情内容..."
-                                      />
+                                        placeholder="描述要表现的广告内容..."
+                                    />
                                   </div>
                                   
                                   <div className="flex flex-wrap items-center gap-2">
@@ -655,9 +655,9 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                                       value={chatInput}
                                       onChange={(e) => setChatInput(e.target.value)}
                                       disabled={isGenerating}
-                                      className="w-full bg-transparent border-none py-3 pl-[240px] pr-16 text-white text-sm focus:outline-none placeholder:text-white/40"
-                                      placeholder={isGenerating ? "视频生成中..." : "描述广告中的剧情内容..."}
-                                  />
+                                    className="w-full bg-transparent border-none py-3 pl-[240px] pr-16 text-white text-sm focus:outline-none placeholder:text-white/40"
+                                    placeholder={isGenerating ? "视频生成中..." : "描述要表现的广告内容..."}
+                                />
                                   <button 
                                       type="submit"
                                       disabled={isGenerating || !chatInput.trim()}

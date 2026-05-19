@@ -14,8 +14,8 @@ export default function GlobalSidebar({ activePage, onNavigate, onLogout }: Glob
 
   const toolItems = [
       { id: 'skill', icon: 'Zap', label: 'Skill' },
-      { id: 'videoGen', icon: 'Wand2', label: '视频生成' },
-      { id: 'imageGen', icon: 'Image', label: '图片生成' }
+      { id: 'imageGen', icon: 'Image', label: '图片生成' },
+      { id: 'videoGen', icon: 'Wand2', label: '视频生成' }
   ];
 
   const projectItems = [
