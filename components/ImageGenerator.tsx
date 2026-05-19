@@ -187,7 +187,7 @@ export default function ImageGenerator() {
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
                                     className="w-full bg-transparent border-none text-white text-sm md:text-base focus:outline-none placeholder:text-white/30 font-medium"
-                                    placeholder="描述您想要生成的广告图片..."
+                                    placeholder="描述你想要生成的图片..."
                                 />
                             </div>
 
