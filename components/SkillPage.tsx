@@ -14,7 +14,7 @@ interface Skill {
 }
 
 export default function SkillPage() {
-  const [activeCategory, setActiveCategory] = useState('创意输出');
+  const [activeCategory, setActiveCategory] = useState('流程汇总');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeBrandKit, setActiveBrandKit] = useState('浦发银行');
   const [selectedSkillModal, setSelectedSkillModal] = useState<Skill | null>(null);
@@ -56,8 +56,8 @@ export default function SkillPage() {
     ],
     '创意输出': [
       { id: '15', title: 'A/B测试设计', author: '系统', description: '在从集思广益的概念中生成广告图像、为A/B测试创建多个广告变体或迭代广告设计（新标题、不同的屏幕截图、颜色更改）时使用。', usageCount: '5.2k', category: '创意输出' },
-      { id: '16', title: '户外广告设计', author: '系统', description: '这项技能将Claude转变为户外（OOH）和数字户外（DOOH）广告的专家。它为基于行业最佳实践创建、管理和优化DOOH活动提供了一个全面的框架。', usageCount: '3.8k', category: '创意输出' },
-      { id: '17', title: '横幅系统', author: '系统', description: '跨社交、广告、网络和印刷格式设计横幅。使用人工智能驱动的视觉元素，每个请求生成多个艺术方向选项。此技能仅处理横幅设计。不处理视频编辑、完整的网站设计或印刷制作。', usageCount: '4.5k', category: '创意输出' },
+      { id: '16', title: '户外广告设计', author: '系统', description: '该工作流将Claude转变为户外（OOH）和数字户外（DOOH）广告的专家。它为基于行业最佳实践创建、管理和优化DOOH活动提供了一个全面的框架。', usageCount: '3.8k', category: '创意输出' },
+      { id: '17', title: '横幅系统', author: '系统', description: '跨社交、广告、网络和印刷格式设计横幅。使用人工智能驱动的视觉元素，每个请求生成多个艺术方向选项。该工作流仅处理横幅设计。不处理视频编辑、完整的网站设计或印刷制作。', usageCount: '4.5k', category: '创意输出' },
     ]
   };
 
@@ -70,7 +70,7 @@ export default function SkillPage() {
           <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center shrink-0">
             <Icon name="Zap" className="w-5 h-5 md:w-6 md:h-6 text-gradient" />
           </div>
-          <h1 className="text-lg md:text-xl font-bold text-white tracking-tight shrink-0">Skill 技能中心</h1>
+          <h1 className="text-lg md:text-xl font-bold text-white tracking-tight shrink-0">工作流中心</h1>
         </div>
 
         <div className="hidden md:block relative ml-4 shrink-0">
@@ -178,7 +178,7 @@ export default function SkillPage() {
           </div>
         </div>
 
-        {/* 技能详情弹窗 */}
+        {/* 工作流详情弹窗 */}
         {selectedSkillModal && (
             <div 
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in px-4"
@@ -243,9 +243,9 @@ export default function SkillPage() {
                             <div className="bg-[#111] rounded-xl border border-white/10 p-6">
                                 <p className="text-base text-white/90 font-medium mb-6">
                                     {selectedSkillModal.id === '16'
-                                        ? '这项技能将Claude转变为户外（OOH）和数字户外（DOOH）广告的专家。它为基于行业最佳实践创建、管理和优化DOOH活动提供了一个全面的框架。該技能旨在幫助使用者利用DOOH的力量，以有影響力的、與上下文相關的資訊傳遞到他們的目標受眾。'
+                                        ? '该工作流将Claude转变为户外（OOH）和数字户外（DOOH）广告的专家。它为基于行业最佳实践创建、管理和优化DOOH活动提供了一个全面的框架。该工作流旨在帮助使用者利用DOOH的力量，以有影响力的、与上下文相关的资讯传递到他们的目标受众。'
                                         : selectedSkillModal.id === '17'
-                                        ? '跨社交、广告、网络和印刷格式设计横幅。使用人工智能驱动的视觉元素，每个请求生成多个艺术方向选项。此技能仅处理横幅设计。不处理视频编辑、完整的网站设计或印刷制作。'
+                                        ? '跨社交、广告、网络和印刷格式设计横幅。使用人工智能驱动的视觉元素，每个请求生成多个艺术方向选项。该工作流仅处理横幅设计。不处理视频编辑、完整的网站设计或印刷制作。'
                                         : '在从集思广益的概念中生成广告图像、为 A/B 测试创建多个广告变体或迭代广告设计（新标题、不同的屏幕截图、颜色更改）时使用。'
                                     }
                                 </p>

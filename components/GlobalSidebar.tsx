@@ -13,7 +13,7 @@ export default function GlobalSidebar({ activePage, onNavigate, onLogout }: Glob
   const brandKitItem = { id: 'brandKit', icon: 'Palette', label: '企业品牌套件' };
 
   const toolItems = [
-      { id: 'skill', icon: 'Zap', label: 'Skill' },
+      { id: 'skill', icon: 'Zap', label: '工作流' },
       { id: 'imageGen', icon: 'Image', label: '图片生成' },
       { id: 'videoGen', icon: 'Wand2', label: '视频生成' }
   ];

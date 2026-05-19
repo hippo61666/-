@@ -49,6 +49,11 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
     duration: '8s'
   });
 
+  // 新增：模型选择状态
+  const [selectedModel, setSelectedModel] = useState('seedance 2.0');
+  const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+  const videoModels = ['seedance 2.0', 'kling 3.0', 'Veo 3.1'];
+
   // 新增：产品和人物图片上传状态
   const [productImage, setProductImage] = useState<string | null>(null);
   const [personImage, setPersonImage] = useState<string | null>(null);
@@ -267,12 +272,10 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                           <h2 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/50 mb-6">Marketing Studio</h2>
                           <h1 className="mb-8 flex flex-col items-center justify-center gap-4 md:gap-5">
                               <div className="flex items-baseline justify-center gap-3 md:gap-4">
-                                  <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 tracking-[0.15em]" style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif' }}>让</span>
                                   <span className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#FF2A6D] to-[#FF6B6B] drop-shadow-2xl" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>MICHI</span>
-                                  <span className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 tracking-[0.15em]" style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif' }}>帮你把</span>
                               </div>
                               <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/90 tracking-[0.15em]" style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif' }}>
-                                产品变为广告
+                                准确生视频
                             </div>
                           </h1>
                       </div>
@@ -294,6 +297,48 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                                   </div>
                                   
                                   <div className="flex flex-wrap items-center gap-2">
+                                      {/* 模型选择 */}
+                                      <div className="relative">
+                                          <button 
+                                              onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setIsModelDropdownOpen(!isModelDropdownOpen);
+                                              }}
+                                              className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] md:text-[11px] font-medium text-white/70 transition-colors shrink-0"
+                                          >
+                                              <Icon name="Cpu" className="w-3 h-3" /> 
+                                              <span className="text-white font-bold">{selectedModel}</span>
+                                              <Icon name="ChevronDown" className="w-3 h-3 ml-1 opacity-50" />
+                                          </button>
+                                          
+                                          {isModelDropdownOpen && (
+                                              <div className="absolute top-full left-0 mt-2 w-40 bg-[#1a0f14]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-glass overflow-hidden z-[100] animate-fade-in origin-top-left">
+                                                  {videoModels.map((model, index) => (
+                                                      <button
+                                                          key={index}
+                                                          onClick={(e) => {
+                                                              e.preventDefault();
+                                                              setSelectedModel(model);
+                                                              setIsModelDropdownOpen(false);
+                                                          }}
+                                                          className={`w-full text-left px-3 py-2.5 text-xs transition-colors flex items-center gap-2 ${
+                                                              selectedModel === model 
+                                                                  ? 'bg-[#FF2A6D]/10 text-[#FF2A6D] font-bold' 
+                                                                  : 'text-white/80 hover:bg-white/5 hover:text-white'
+                                                          }`}
+                                                      >
+                                                          {selectedModel === model ? (
+                                                              <Icon name="Check" className="w-3 h-3" />
+                                                          ) : (
+                                                              <div className="w-3 h-3"></div>
+                                                          )}
+                                                          {model}
+                                                      </button>
+                                                  ))}
+                                              </div>
+                                          )}
+                                      </div>
+
                                       <button 
                                           onClick={(e) => {
                                               e.preventDefault();
@@ -622,6 +667,48 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                           <div className="p-1.5 bg-white/[0.02] border border-white/10 rounded-full shadow-glass backdrop-blur-xl">
                               <div className="relative flex items-center">
                                   <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
+                                      {/* 底部模型选择 */}
+                                      <div className="relative">
+                                          <button 
+                                              type="button"
+                                              onClick={(e) => {
+                                                  e.preventDefault();
+                                                  setIsModelDropdownOpen(!isModelDropdownOpen);
+                                              }}
+                                              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-[11px] font-medium text-white/70 transition-colors"
+                                          >
+                                              <Icon name="Cpu" className="w-3 h-3" /> 
+                                              <span className="text-white font-bold">{selectedModel}</span>
+                                          </button>
+                                          
+                                          {isModelDropdownOpen && (
+                                              <div className="absolute bottom-full left-0 mb-2 w-40 bg-[#1a0f14]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-glass overflow-hidden z-[100] animate-fade-in origin-bottom-left">
+                                                  {videoModels.map((model, index) => (
+                                                      <button
+                                                          key={index}
+                                                          onClick={(e) => {
+                                                              e.preventDefault();
+                                                              setSelectedModel(model);
+                                                              setIsModelDropdownOpen(false);
+                                                          }}
+                                                          className={`w-full text-left px-3 py-2.5 text-xs transition-colors flex items-center gap-2 ${
+                                                              selectedModel === model 
+                                                                  ? 'bg-[#FF2A6D]/10 text-[#FF2A6D] font-bold' 
+                                                                  : 'text-white/80 hover:bg-white/5 hover:text-white'
+                                                          }`}
+                                                      >
+                                                          {selectedModel === model ? (
+                                                              <Icon name="Check" className="w-3 h-3" />
+                                                          ) : (
+                                                              <div className="w-3 h-3"></div>
+                                                          )}
+                                                          {model}
+                                                      </button>
+                                                  ))}
+                                              </div>
+                                          )}
+                                      </div>
+
                                       <button 
                                           type="button"
                                           onClick={() => setIsTemplateModalOpen(true)}
@@ -655,7 +742,7 @@ export default function VideoGenerator({ onNavigate, projectId, onProjectCreated
                                       value={chatInput}
                                       onChange={(e) => setChatInput(e.target.value)}
                                       disabled={isGenerating}
-                                    className="w-full bg-transparent border-none py-3 pl-[240px] pr-16 text-white text-sm focus:outline-none placeholder:text-white/40"
+                                    className="w-full bg-transparent border-none py-3 pl-[340px] pr-16 text-white text-sm focus:outline-none placeholder:text-white/40"
                                     placeholder={isGenerating ? "视频生成中..." : "描述要表现的广告内容..."}
                                 />
                                   <button 
