@@ -53,12 +53,26 @@ export default function Home() {
         updatedAt: new Date().toISOString(),
         status: project.initialPrompt ? 'GENERATING' : 'DRAFT',
         description: project.initialPrompt || '新建的空白项目对话',
+        skills: project.initialPrompt ? [] : project.skills,
+        workflow: project.workflow,
+        capability: project.capability,
       };
 
       return [savedProject, ...currentProjects];
     });
     setActiveProject(project);
     setActivePage('project');
+  };
+
+  const handleProjectCapabilitiesChange = (skills: string[], workflow: string | null) => {
+    if (!activeProject) return;
+
+    setActiveProject(current => current ? { ...current, skills, workflow } : current);
+    setProjects(currentProjects =>
+      currentProjects.map(project =>
+        project.id === activeProject.id ? { ...project, skills, workflow } : project
+      )
+    );
   };
 
   const brandTheme = activeBrandKit === '浦发银行' ? 'spd-bank' : 'songmont';
@@ -81,6 +95,7 @@ export default function Home() {
             project={activeProject}
             activeBrandKit={activeBrandKit}
             onBrandKitChange={setActiveBrandKit}
+            onCapabilitiesChange={handleProjectCapabilitiesChange}
             onBack={() => handleNavigate('generate')}
           />
         ) : (

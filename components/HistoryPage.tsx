@@ -85,8 +85,9 @@ export default function HistoryPage({
                   title: project.title,
                   brandKit: project.brandKit,
                   initialPrompt: project.description,
-                  skill: null,
-                  capability: '全能生成',
+                  skills: project.skills ?? [],
+                  workflow: project.workflow ?? null,
+                  capability: project.capability ?? '全能生成',
                 })}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
@@ -96,8 +97,9 @@ export default function HistoryPage({
                       title: project.title,
                       brandKit: project.brandKit,
                       initialPrompt: project.description,
-                      skill: null,
-                      capability: '全能生成',
+                      skills: project.skills ?? [],
+                      workflow: project.workflow ?? null,
+                      capability: project.capability ?? '全能生成',
                     });
                   }
                 }}

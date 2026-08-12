@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import BrandKitSelector from '@/components/BrandKitSelector';
+import PromptCapabilityControls, { SelectedSkillChips } from '@/components/PromptCapabilityControls';
 import type { ProjectDraft } from '@/components/ProjectChatPage';
-import { brandSkills, type BrandKitName, type MockProject } from '@/components/brandData';
+import { brandSkills, brandWorkflows, type BrandKitName, type MockProject } from '@/components/brandData';
 
 const capabilityChips = [
   { label: '全能生成', icon: 'Sparkles' },
@@ -31,28 +32,33 @@ export default function GeneratePage({
 }: GeneratePageProps) {
   const [prompt, setPrompt] = useState('');
   const [activeCapability, setActiveCapability] = useState('全能生成');
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [isSkillOpen, setIsSkillOpen] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
   const availableSkills = brandSkills[activeBrandKit];
+  const availableWorkflows = brandWorkflows[activeBrandKit];
   const brandProjects = projects.filter(project => project.brandKit === activeBrandKit).slice(0, 5);
 
   useEffect(() => {
-    if (selectedSkill && !availableSkills.some(skill => skill.name === selectedSkill)) {
-      setSelectedSkill(null);
+    setSelectedSkills(current =>
+      current.filter(selected => availableSkills.some(skill => skill.name === selected))
+    );
+    if (selectedWorkflow && !availableWorkflows.some(workflow => workflow.name === selectedWorkflow)) {
+      setSelectedWorkflow(null);
     }
-  }, [activeBrandKit, availableSkills, selectedSkill]);
+  }, [activeBrandKit, availableSkills, availableWorkflows, selectedWorkflow]);
 
   const handleCreateProject = () => {
     setPrompt('');
     setActiveCapability('全能生成');
-    setSelectedSkill(null);
-    setIsSkillOpen(false);
+    setSelectedSkills([]);
+    setSelectedWorkflow(null);
     onStartProject({
       id: `project-${Date.now()}`,
       title: '新项目',
       brandKit: activeBrandKit,
       initialPrompt: '',
-      skill: null,
+      skills: [],
+      workflow: null,
       capability: '全能生成',
     });
   };
@@ -66,7 +72,8 @@ export default function GeneratePage({
       title: initialPrompt.length > 20 ? `${initialPrompt.slice(0, 20)}…` : initialPrompt,
       brandKit: activeBrandKit,
       initialPrompt,
-      skill: selectedSkill,
+      skills: selectedSkills,
+      workflow: selectedWorkflow,
       capability: activeCapability,
     });
   };
@@ -81,7 +88,7 @@ export default function GeneratePage({
           <div className="w-10 h-10 flex items-center justify-center">
             <Icon name="Sparkles" className="w-6 h-6 text-gradient" />
           </div>
-          <h1 className="text-xl font-bold text-white tracking-tight">生成</h1>
+          <h1 className="text-xl font-bold text-white tracking-tight">新建项目</h1>
         </div>
 
         <BrandKitSelector activeBrandKit={activeBrandKit} onBrandKitChange={onBrandKitChange} />
@@ -107,23 +114,10 @@ export default function GeneratePage({
 
             <div className="w-full max-w-3xl bg-white/[0.02] border border-white/10 p-2 rounded-[2rem] shadow-glass animate-slide-up relative z-50" style={{ animationDelay: '120ms' }}>
               <div className="bg-[#1a0f14]/95 rounded-[calc(2rem-0.5rem)] p-4 md:p-5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                {selectedSkill && (
-                  <div className="mb-3 flex">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)]">
-                      <Icon name="Zap" className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                      <span>{selectedSkill}</span>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedSkill(null)}
-                        className="-mr-1 flex h-5 w-5 items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white"
-                        aria-label={`取消 ${selectedSkill}`}
-                      >
-                        <Icon name="X" className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
+                <SelectedSkillChips
+                  selectedSkills={selectedSkills}
+                  onRemove={skill => setSelectedSkills(current => current.filter(item => item !== skill))}
+                />
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
@@ -131,53 +125,15 @@ export default function GeneratePage({
                   placeholder={`告诉 MICHI 你想生成什么，例如：为${activeBrandKit}设计一套七夕活动传播方案，包含主视觉方向、社媒文案和落地页结构...`}
                 />
 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-3 border-t border-white/5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl text-[11px] font-medium text-white/70 transition-colors">
-                      <Icon name="Plus" className="w-3.5 h-3.5" />
-                      添加参考
-                    </button>
-                    <div className="relative z-[200]">
-                      <button
-                        onClick={() => setIsSkillOpen(!isSkillOpen)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl text-[11px] font-medium text-white/70 transition-colors"
-                      >
-                        <Icon name="Zap" className="w-3.5 h-3.5" />
-                        <span>{selectedSkill ? '更换 Skill' : '调用 Skill'}</span>
-                        <Icon name={isSkillOpen ? 'ChevronUp' : 'ChevronDown'} className="w-3 h-3 opacity-50" />
-                      </button>
-
-                      {isSkillOpen && (
-                        <div className="absolute top-full left-0 mt-2 w-64 max-h-72 overflow-y-auto custom-scrollbar bg-[#120910] border border-white/15 rounded-xl shadow-[0_24px_80px_rgba(0,0,0,0.75)] z-[9999] animate-fade-in origin-top-left">
-                          {availableSkills.map((skill) => (
-                            <button
-                              key={skill.name}
-                              onClick={() => {
-                                setSelectedSkill(skill.name);
-                                setIsSkillOpen(false);
-                              }}
-                              className={`w-full text-left px-4 py-3 text-sm transition-colors flex items-center gap-2 ${
-                                selectedSkill === skill.name
-                                  ? 'bg-[rgb(var(--brand-rgb)/0.1)] text-[var(--brand-primary)] font-bold'
-                                  : 'bg-[#120910] text-white/80 hover:bg-white/5 hover:text-white'
-                              }`}
-                            >
-                              {selectedSkill === skill.name ? (
-                                <Icon name="Check" className="w-4 h-4" />
-                              ) : (
-                                <div className="w-4 h-4"></div>
-                              )}
-                              <span className="flex flex-col gap-1">
-                                <span>{skill.name}</span>
-                                <span className="text-[11px] font-normal text-white/40 leading-relaxed">{skill.description}</span>
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
+                <div className="flex items-end justify-between gap-3 pt-3 border-t border-white/5">
+                  <PromptCapabilityControls
+                    availableSkills={availableSkills}
+                    availableWorkflows={availableWorkflows}
+                    selectedSkills={selectedSkills}
+                    selectedWorkflow={selectedWorkflow}
+                    onSkillsChange={setSelectedSkills}
+                    onWorkflowChange={setSelectedWorkflow}
+                  />
                   <button
                     onClick={handleStartGenerating}
                     disabled={!prompt.trim()}
@@ -231,8 +187,9 @@ export default function GeneratePage({
                     title: project.title,
                     brandKit: project.brandKit,
                     initialPrompt: project.description,
-                    skill: null,
-                    capability: '全能生成',
+                    skills: project.skills ?? [],
+                    workflow: project.workflow ?? null,
+                    capability: project.capability ?? '全能生成',
                   })}
                   className="group cursor-pointer text-left focus:outline-none"
                 >

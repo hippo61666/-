@@ -17,6 +17,11 @@ export interface BrandSkill {
   description: string;
 }
 
+export interface BrandWorkflow {
+  name: string;
+  description: string;
+}
+
 export const brandSkills: Record<BrandKitName, BrandSkill[]> = {
   浦发银行: [
     { name: '日报', description: '汇总浦发银行当日品牌传播、投放和市场反馈。' },
@@ -34,6 +39,19 @@ export const brandSkills: Record<BrandKitName, BrandSkill[]> = {
   ],
 };
 
+export const brandWorkflows: Record<BrandKitName, BrandWorkflow[]> = {
+  浦发银行: [
+    { name: '品牌日报工作流', description: '按固定步骤汇总品牌动态、投放信息和市场反馈。' },
+    { name: '预算审批工作流', description: '完成营销预算材料整理、检查和审批流转。' },
+    { name: '活动方案工作流', description: '从策略、创意到渠道执行生成完整品牌活动方案。' },
+  ],
+  山下有松: [
+    { name: '新品上市工作流', description: '从品牌故事到渠道内容完成新品上市方案。' },
+    { name: '社媒种草工作流', description: '按平台生成选题、内容和发布节奏。' },
+    { name: '门店陈列工作流', description: '结合品牌规范输出门店陈列建议。' },
+  ],
+};
+
 export interface MockProject {
   id: string;
   brandKit: BrandKitName;
@@ -41,6 +59,9 @@ export interface MockProject {
   updatedAt: string;
   status: 'COMPLETED' | 'GENERATING' | 'DRAFT';
   description: string;
+  skills?: string[];
+  workflow?: string | null;
+  capability?: string;
 }
 
 export const mockProjects: MockProject[] = [

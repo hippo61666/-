@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import BrandKitSelector from '@/components/BrandKitSelector';
-import type { BrandKitName } from '@/components/brandData';
+import PromptCapabilityControls, { SelectedSkillChips } from '@/components/PromptCapabilityControls';
+import { brandSkills, brandWorkflows, type BrandKitName } from '@/components/brandData';
 import { Icon } from '@/components/ui/Icon';
 
 export interface ProjectDraft {
@@ -10,7 +11,8 @@ export interface ProjectDraft {
   title: string;
   brandKit: BrandKitName;
   initialPrompt: string;
-  skill: string | null;
+  skills: string[];
+  workflow: string | null;
   capability: string;
 }
 
@@ -24,18 +26,27 @@ interface ProjectChatPageProps {
   project: ProjectDraft;
   activeBrandKit: BrandKitName;
   onBrandKitChange: (brandKit: BrandKitName) => void;
+  onCapabilitiesChange: (skills: string[], workflow: string | null) => void;
   onBack: () => void;
 }
 
-const buildResponse = (prompt: string, brandKit: BrandKitName, capability: string, skill: string | null) => {
-  const workflow = skill ? `，并调用「${skill}」工作流` : '';
-  return `已收到。我会基于「${brandKit}」品牌套件${workflow}，按「${capability}」方向推进。\n\n本轮需求：${prompt}\n\n我会先梳理目标与受众，再形成核心创意、内容结构和可执行的交付清单。你可以继续补充渠道、时间、预算或输出格式，我会在当前项目中持续完善。`;
+const buildResponse = (
+  prompt: string,
+  brandKit: BrandKitName,
+  capability: string,
+  skills: string[],
+  workflow: string | null
+) => {
+  const skillContext = skills.length > 0 ? `，使用 Skill「${skills.join('、')}」` : '';
+  const workflowContext = workflow ? `，并调用工作流「${workflow}」` : '';
+  return `已收到。我会基于「${brandKit}」品牌套件${skillContext}${workflowContext}，按「${capability}」方向推进。\n\n本轮需求：${prompt}\n\n我会先梳理目标与受众，再形成核心创意、内容结构和可执行的交付清单。你可以继续补充渠道、时间、预算或输出格式，我会在当前项目中持续完善。`;
 };
 
 export default function ProjectChatPage({
   project,
   activeBrandKit,
   onBrandKitChange,
+  onCapabilitiesChange,
   onBack,
 }: ProjectChatPageProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
@@ -44,26 +55,39 @@ export default function ProjectChatPage({
       : []
   );
   const [input, setInput] = useState('');
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(
+    project.initialPrompt ? [] : project.skills
+  );
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(project.workflow);
   const [isGenerating, setIsGenerating] = useState(Boolean(project.initialPrompt));
+  const availableSkills = brandSkills[project.brandKit];
+  const availableWorkflows = brandWorkflows[project.brandKit];
   const bottomRef = useRef<HTMLDivElement>(null);
+  const initialProject = useRef(project).current;
 
   useEffect(() => {
-    if (!project.initialPrompt) return;
+    if (!initialProject.initialPrompt) return;
 
     const timer = window.setTimeout(() => {
       setMessages(current => [
         ...current,
         {
-          id: `${project.id}-assistant-1`,
+          id: `${initialProject.id}-assistant-1`,
           role: 'assistant',
-          content: buildResponse(project.initialPrompt, project.brandKit, project.capability, project.skill),
+          content: buildResponse(
+            initialProject.initialPrompt,
+            initialProject.brandKit,
+            initialProject.capability,
+            initialProject.skills,
+            initialProject.workflow
+          ),
         },
       ]);
       setIsGenerating(false);
     }, 700);
 
     return () => window.clearTimeout(timer);
-  }, [project]);
+  }, [initialProject]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -74,11 +98,15 @@ export default function ProjectChatPage({
     if (!content || isGenerating) return;
 
     const turn = messages.length + 1;
+    const skillsForTurn = [...selectedSkills];
+    const workflowForTurn = selectedWorkflow;
     setMessages(current => [
       ...current,
       { id: `${project.id}-user-${turn}`, role: 'user', content },
     ]);
     setInput('');
+    setSelectedSkills([]);
+    onCapabilitiesChange([], selectedWorkflow);
     setIsGenerating(true);
 
     window.setTimeout(() => {
@@ -87,7 +115,13 @@ export default function ProjectChatPage({
         {
           id: `${project.id}-assistant-${turn}`,
           role: 'assistant',
-          content: buildResponse(content, activeBrandKit, project.capability, project.skill),
+          content: buildResponse(
+            content,
+            project.brandKit,
+            project.capability,
+            skillsForTurn,
+            workflowForTurn
+          ),
         },
       ]);
       setIsGenerating(false);
@@ -171,6 +205,14 @@ export default function ProjectChatPage({
 
       <div className="absolute bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-[#0d060a] via-[#0d060a] to-transparent px-5 pb-6 pt-12 md:px-10">
         <div className="mx-auto w-full max-w-3xl rounded-2xl border border-white/10 bg-[#1a0f14]/95 p-2 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+          <SelectedSkillChips
+            selectedSkills={selectedSkills}
+            onRemove={skill => {
+              const nextSkills = selectedSkills.filter(item => item !== skill);
+              setSelectedSkills(nextSkills);
+              onCapabilitiesChange(nextSkills, selectedWorkflow);
+            }}
+          />
           <textarea
             value={input}
             onChange={event => setInput(event.target.value)}
@@ -183,12 +225,23 @@ export default function ProjectChatPage({
             placeholder="继续描述需求，Enter 发送，Shift + Enter 换行"
             className="min-h-[64px] w-full resize-none bg-transparent px-3 py-2 text-sm leading-6 text-white placeholder:text-white/30 focus:outline-none"
           />
-          <div className="flex items-center justify-between border-t border-white/5 px-2 pt-2">
-            <div className="flex items-center gap-2 text-[11px] text-white/35">
-              <Icon name="Palette" className="h-3.5 w-3.5" />
-              {activeBrandKit}
-              {project.skill && <span>· {project.skill}</span>}
-            </div>
+          <div className="border-t border-white/5 px-2 pt-2">
+            <div className="flex items-end justify-between gap-3">
+              <PromptCapabilityControls
+                availableSkills={availableSkills}
+                availableWorkflows={availableWorkflows}
+                selectedSkills={selectedSkills}
+                selectedWorkflow={selectedWorkflow}
+                onSkillsChange={skills => {
+                  setSelectedSkills(skills);
+                  onCapabilitiesChange(skills, selectedWorkflow);
+                }}
+                onWorkflowChange={workflow => {
+                  setSelectedWorkflow(workflow);
+                  onCapabilitiesChange(selectedSkills, workflow);
+                }}
+                dropdownDirection="up"
+              />
             <button
               type="button"
               onClick={sendMessage}
@@ -198,6 +251,7 @@ export default function ProjectChatPage({
             >
               <Icon name="ArrowUp" className="h-4 w-4" />
             </button>
+            </div>
           </div>
         </div>
       </div>

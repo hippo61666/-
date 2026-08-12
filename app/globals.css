@@ -27,6 +27,14 @@
     --brand-secondary-rgb: 196 122 58;
   }
 
+  [data-brand-theme="michi"] {
+    --brand-primary: #E60000;
+    --brand-secondary: #FF2A2A;
+    --brand-tertiary: #A80000;
+    --brand-rgb: 230 0 0;
+    --brand-secondary-rgb: 255 42 42;
+  }
+
   body {
     background-color: #0d060a; /* Darkest red/black */
     color: #ffffff;

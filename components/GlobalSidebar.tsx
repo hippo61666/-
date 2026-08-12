@@ -26,7 +26,7 @@ export default function GlobalSidebar({
 }: GlobalSidebarProps) {
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
   const brandKitItem = { id: 'brandKit', icon: 'Palette', label: '企业品牌套件' };
-  const generateItem = { id: 'generate', icon: 'Sparkles', label: '生成' };
+  const generateItem = { id: 'generate', icon: 'Sparkles', label: '新建项目' };
   const brandProjects = projects.filter(project => project.brandKit === activeBrandKit);
 
   const openProject = (project: MockProject) => {
@@ -35,8 +35,9 @@ export default function GlobalSidebar({
       title: project.title,
       brandKit: project.brandKit,
       initialPrompt: project.description === '新建的空白项目对话' ? '' : project.description,
-      skill: null,
-      capability: '全能生成',
+      skills: project.skills ?? [],
+      workflow: project.workflow ?? null,
+      capability: project.capability ?? '全能生成',
     });
   };
 
