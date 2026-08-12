@@ -79,16 +79,3 @@ export interface VisualElements {
     custom_text?: string;
   };
 }
-
-export interface SeedanceGenerationParams {
-  prompt: string;
-  negative_prompt?: string;
-  video_length: number; // 15, 30, 45, 60
-  resolution?: string;
-  aspect_ratio?: string;
-  reference_images?: string[];
-  reference_audio?: string;
-  // Seedance 特有参数
-  style_strength?: number;
-  motion_strength?: number;
-}

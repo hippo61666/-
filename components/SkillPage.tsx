@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
+import BrandKitSelector from '@/components/BrandKitSelector';
+import type { BrandKitName } from '@/components/brandData';
 
 interface Skill {
   id: string;
@@ -13,10 +15,13 @@ interface Skill {
   category: string;
 }
 
-export default function SkillPage() {
+interface SkillPageProps {
+  activeBrandKit: BrandKitName;
+  onBrandKitChange: (brandKit: BrandKitName) => void;
+}
+
+export default function SkillPage({ activeBrandKit, onBrandKitChange }: SkillPageProps) {
   const [activeCategory, setActiveCategory] = useState('流程汇总');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeBrandKit, setActiveBrandKit] = useState('浦发银行');
   const [selectedSkillModal, setSelectedSkillModal] = useState<Skill | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -31,7 +36,6 @@ export default function SkillPage() {
   };
 
   const categories = ['流程汇总', '品牌管理', '调研报告', '创意输出'];
-  const brandKits = ['浦发银行', '山下有松'];
 
   const skillsData: Record<string, Skill[]> = {
     '流程汇总': [
@@ -73,48 +77,16 @@ export default function SkillPage() {
           <h1 className="text-lg md:text-xl font-bold text-white tracking-tight shrink-0">工作流中心</h1>
         </div>
 
-        <div className="hidden md:block relative ml-4 shrink-0">
-            <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-[#FF2A6D]/10 border border-[#FF2A6D]/30 rounded-full text-xs font-bold text-[#FF2A6D] shadow-[0_0_15px_rgba(255,42,109,0.15)] hover:bg-[#FF2A6D]/20 transition-all focus:outline-none backdrop-blur-md cursor-pointer"
-            >
-                <Icon name="Palette" className="w-3 h-3" />
-                当前关联套件：{activeBrandKit}
-                <Icon name={isDropdownOpen ? "ChevronUp" : "ChevronDown"} className="w-3 h-3 ml-1" />
-            </button>
-
-            {/* 下拉菜单 */}
-            {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#1a0f14]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-glass overflow-hidden z-[100] animate-fade-in origin-top-right">
-                    {brandKits.map((kit, index) => (
-                        <button
-                            key={index}
-                            onClick={() => {
-                                setActiveBrandKit(kit);
-                                setIsDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-4 py-3 text-sm transition-colors flex items-center gap-2 ${
-                                activeBrandKit === kit 
-                                    ? 'bg-[#FF2A6D]/10 text-[#FF2A6D] font-bold' 
-                                    : 'text-white/80 hover:bg-white/5 hover:text-white'
-                            }`}
-                        >
-                            {activeBrandKit === kit ? (
-                                <Icon name="Check" className="w-4 h-4" />
-                            ) : (
-                                <div className="w-4 h-4"></div>
-                            )}
-                            {kit}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
+        <BrandKitSelector
+          activeBrandKit={activeBrandKit}
+          onBrandKitChange={onBrandKitChange}
+          className="hidden md:block ml-4 shrink-0"
+        />
       </header>
       
       <div className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar relative">
         {/* 装饰光晕 */}
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#FF2A6D]/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[rgb(var(--brand-rgb)/0.1)] rounded-full blur-[120px] pointer-events-none z-0"></div>
         
         {/* 分类导航 - 移动到内容区域上方，居左 */}
         <div className="flex items-center mb-8 gap-2 overflow-x-auto custom-scrollbar relative z-10 w-full">
@@ -124,7 +96,7 @@ export default function SkillPage() {
                     onClick={() => setActiveCategory(category)}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap shrink-0 border ${
                         activeCategory === category 
-                            ? 'bg-[#FF2A6D]/20 text-[#FF2A6D] border-[#FF2A6D]/30 shadow-[0_0_15px_rgba(255,42,109,0.1)]' 
+                            ? 'bg-[rgb(var(--brand-rgb)/0.2)] text-[var(--brand-primary)] border-[rgb(var(--brand-rgb)/0.3)] shadow-[0_0_15px_rgb(var(--brand-rgb) / 0.1)]'
                             : 'bg-[#1a0f14]/80 text-white/50 border-white/10 hover:text-white hover:bg-white/5'
                     }`}
                 >
@@ -138,21 +110,21 @@ export default function SkillPage() {
               <div 
                 key={skill.id} 
                 onClick={() => setSelectedSkillModal(skill)}
-                className="group cursor-pointer bg-[#1a0f14] rounded-2xl border border-white/10 p-5 flex gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-[#FF2A6D]/30 hover:shadow-glass animate-slide-up"
+                className="group cursor-pointer bg-[#1a0f14] rounded-2xl border border-white/10 p-5 flex gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-[rgb(var(--brand-rgb)/0.3)] hover:shadow-glass animate-slide-up"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 {/* 图标/缩略图 */}
-                <div className="w-20 h-20 shrink-0 rounded-xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-[#FF2A6D]/50 transition-colors">
+                <div className="w-20 h-20 shrink-0 rounded-xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-[rgb(var(--brand-rgb)/0.5)] transition-colors">
                    {skill.image ? (
                        <img src={skill.image} alt={skill.title} className="w-full h-full object-cover" />
                    ) : (
-                       <Icon name="Zap" className="w-8 h-8 text-white/30 group-hover:text-[#FF2A6D] transition-colors" />
+                       <Icon name="Zap" className="w-8 h-8 text-white/30 group-hover:text-[var(--brand-primary)] transition-colors" />
                    )}
                 </div>
                 
                 {/* 内容信息 */}
                 <div className="flex flex-col flex-1 min-w-0">
-                  <h3 className="text-white font-bold text-base truncate group-hover:text-[#FF2A6D] transition-colors">
+                  <h3 className="text-white font-bold text-base truncate group-hover:text-[var(--brand-primary)] transition-colors">
                     {skill.title}
                   </h3>
                   <div className="flex items-center gap-1.5 mt-1 text-xs text-white/40">
@@ -165,7 +137,7 @@ export default function SkillPage() {
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
                     <span className="text-xs text-white/30 flex items-center gap-1">
                         使用次数
-                        <Icon name="Zap" className="w-3 h-3 text-[#FF2A6D]" />
+                        <Icon name="Zap" className="w-3 h-3 text-[var(--brand-primary)]" />
                         {skill.usageCount}
                     </span>
                     <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

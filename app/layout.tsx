@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "视频广告平台 - Seedance AI",
-  description: "基于 Seedance 2.0 的视频广告生成平台",
+  title: "MICHI Marketing Studio",
+  description: "基于统一品牌数据的营销创意生成平台",
 };
 
 export default function RootLayout({
@@ -26,8 +26,8 @@ export default function RootLayout({
         <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
           <defs>
             <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FF2A6D" />
-              <stop offset="100%" stopColor="#FF6B6B" />
+              <stop offset="0%" stopColor="var(--brand-primary)" />
+              <stop offset="100%" stopColor="var(--brand-secondary)" />
             </linearGradient>
           </defs>
         </svg>

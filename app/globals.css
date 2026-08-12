@@ -3,6 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --brand-primary: #FF2A6D;
+    --brand-secondary: #FF6B6B;
+    --brand-tertiary: #FF4D85;
+    --brand-rgb: 255 42 109;
+    --brand-secondary-rgb: 255 107 107;
+  }
+
+  [data-brand-theme="spd-bank"] {
+    --brand-primary: #073E88;
+    --brand-secondary: #0B63CE;
+    --brand-tertiary: #2F8CFF;
+    --brand-rgb: 7 62 136;
+    --brand-secondary-rgb: 47 140 255;
+  }
+
   body {
     background-color: #0d060a; /* Darkest red/black */
     color: #ffffff;
@@ -20,13 +36,32 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
   
   .bg-gradient-soft {
-    background: radial-gradient(circle at 50% 40%, rgba(255, 42, 109, 0.15) 0%, rgba(13, 6, 10, 0) 60%);
+    background: radial-gradient(circle at 50% 40%, rgb(var(--brand-rgb) / 0.15) 0%, rgba(13, 6, 10, 0) 60%);
   }
   
   .text-gradient {
-    background: linear-gradient(135deg, #FF2A6D 0%, #FF6B6B 100%);
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  .text-shine {
+    color: transparent;
+    background: linear-gradient(
+      110deg,
+      var(--brand-primary) 0%,
+      var(--brand-secondary) 32%,
+      #ffffff 48%,
+      var(--brand-tertiary) 58%,
+      var(--brand-secondary) 70%,
+      var(--brand-primary) 100%
+    );
+    background-size: 240% 100%;
+    background-position: 120% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 4.2s linear infinite;
   }
 
   .stroke-gradient {
@@ -34,12 +69,12 @@
   }
 
   .btn-gradient {
-    background: linear-gradient(90deg, #FF2A6D 0%, #FF4D85 100%);
+    background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-tertiary) 100%);
     transition: all 0.5s cubic-bezier(0.32,0.72,0,1);
   }
   
   .btn-gradient:hover:not(:disabled) {
-    box-shadow: 0 8px 30px -6px rgba(255, 42, 109, 0.6);
+    box-shadow: 0 8px 30px -6px rgb(var(--brand-rgb) / 0.6);
     transform: translateY(-2px);
   }
   
@@ -60,7 +95,7 @@
   }
   
   .shadow-glow {
-    box-shadow: 0 0 30px rgba(255, 42, 109, 0.25);
+    box-shadow: 0 0 30px rgb(var(--brand-rgb) / 0.25);
   }
   
   .shadow-glass {
@@ -87,6 +122,15 @@
 @keyframes borderSpin {
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes textShine {
+  0% {
+    background-position: 140% 0;
+  }
+  100% {
+    background-position: -140% 0;
   }
 }
 
