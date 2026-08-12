@@ -61,7 +61,7 @@ export default function Home() {
     setActivePage('project');
   };
 
-  const brandTheme = activeBrandKit === '浦发银行' ? 'spd-bank' : 'default';
+  const brandTheme = activeBrandKit === '浦发银行' ? 'spd-bank' : 'songmont';
 
   const renderContent = () => {
     switch (activePage) {

@@ -19,6 +19,14 @@
     --brand-secondary-rgb: 47 140 255;
   }
 
+  [data-brand-theme="songmont"] {
+    --brand-primary: #A8612A;
+    --brand-secondary: #C47A3A;
+    --brand-tertiary: #D69A5B;
+    --brand-rgb: 168 97 42;
+    --brand-secondary-rgb: 196 122 58;
+  }
+
   body {
     background-color: #0d060a; /* Darkest red/black */
     color: #ffffff;
