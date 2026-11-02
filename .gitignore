@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+.env
+.env.*
+.d2c_temp/
+playwright-report/
+test-results/
+.trae-cn/
+.trae-html-share-packages/
+.uploads/
